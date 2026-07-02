@@ -371,7 +371,9 @@ $.AimSync = (function () {
     });
     return section;
   };
-
+)"
+// split the string literal because MSVC does not support string literals longer than 16k chars - error C2026
+u8R"(
   var createDropDown = function (parent, labelText, section, feature, options) {
     var container = $.CreatePanel('Panel', parent, '', {
       class: "SettingsMenuDropdownContainer"
