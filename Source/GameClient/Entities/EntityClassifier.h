@@ -16,7 +16,12 @@
 #include <CS2/Classes/EntitySystem/CEntityClass.h>
 #include <CS2/Constants/EntityClasses.h>
 #include <GameClient/EntitySystem/EntitySystem.h>
+#include <Platform/Macros/IsPlatform.h>
 #include <Utils/TypeIndex.h>
+
+#if IS_WIN64()
+#include <Windows.h>
+#endif
 
 struct EntityTypeInfo {
     using Index = std::uint8_t;
@@ -75,8 +80,11 @@ class EntityClassifier {
 public:
     void init(auto& hookContext) noexcept
     {
-        cs2::kEntityClassNames.forEach([i = 0u, &hookContext, this](const auto typeName) mutable {
+        std::size_t resolved = 0;
+        cs2::kEntityClassNames.forEach([i = 0u, &hookContext, &resolved, this](const auto typeName) mutable {
             const auto entityClass = hookContext.template make<EntitySystem>().findEntityClass(typeName);
+            if (entityClass)
+                ++resolved;
             auto j = i;
             while (j > 0 && std::less{}(entityClass, entityClasses[j - 1])) {
                 entityClasses[j] = entityClasses[j - 1];
@@ -90,6 +98,35 @@ public:
 
         for (std::size_t i = 0; i < std::tuple_size_v<cs2::EntityClasses>; ++i)
             entityTypeIndexToClassIndex[entityClassIndexToTypeIndex[i]] = static_cast<EntityTypeInfo::Index>(i);
+
+#if IS_WIN64()
+        char message[96]{};
+        char* write = message;
+        for (const char* prefix = "[AimSync] entityClassifier resolved "; *prefix; ++prefix)
+            *write++ = *prefix;
+        // simple decimal
+        char digits[16]{};
+        auto count = resolved;
+        int n = 0;
+        do {
+            digits[n++] = static_cast<char>('0' + (count % 10));
+            count /= 10;
+        } while (count != 0);
+        while (n--)
+            *write++ = digits[n];
+        *write++ = '/';
+        count = std::tuple_size_v<cs2::EntityClasses>;
+        n = 0;
+        do {
+            digits[n++] = static_cast<char>('0' + (count % 10));
+            count /= 10;
+        } while (count != 0);
+        while (n--)
+            *write++ = digits[n];
+        *write = '\0';
+        OutputDebugStringA(message);
+        OutputDebugStringA("\n");
+#endif
     }
 
     template <typename EntityType>

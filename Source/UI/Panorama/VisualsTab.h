@@ -10,11 +10,13 @@
 
 #include "Tabs/VisualsTab/PlayerInfoInWorldDropdownSelectionChangeHandler.h"
 #include "Tabs/VisualsTab/PlayerInfoInWorldPlayerHealthColorModeDropdownSelectionChangeHandler.h"
+#include "Tabs/VisualsTab/PlayerInfoInWorldPlayerNameColorModeDropdownSelectionChangeHandler.h"
 #include "Tabs/VisualsTab/PlayerInfoInWorldPlayerPositionArrowColorModeDropdownSelectionChangeHandler.h"
 #include "Tabs/VisualsTab/PlayerModelGlowColorModeDropdownSelectionChangeHandler.h"
 #include "Tabs/VisualsTab/PlayerModelGlowDropdownSelectionChangeHandler.h"
 #include "Tabs/VisualsTab/PlayerOutlineGlowColorModeDropdownSelectionChangeHandler.h"
 #include "Tabs/VisualsTab/PlayerOutlineGlowDropdownSelectionChangeHandler.h"
+#include <Features/Visuals/GrenadePrediction/GrenadePredictionConfigVariables.h>
 
 template <typename HookContext>
 class VisualsTab {
@@ -30,6 +32,7 @@ public:
         initModelGlowTab(guiPanel);
         initOutlineGlowTab(guiPanel);
         initViewmodelTab(guiPanel);
+        initGrenadePredictionTab(guiPanel);
     }
 
     void updateFromConfig(auto&& mainMenu) const noexcept
@@ -38,6 +41,7 @@ public:
         updateOutlineGlowTab(mainMenu);
         updateModelGlowTab(mainMenu);
         updateViewmodelTab(mainMenu);
+        updateGrenadePredictionTab(mainMenu);
     }
 
 private:
@@ -46,6 +50,8 @@ private:
         initDropDown<PlayerInfoInWorldDropdownSelectionChangeHandler<HookContext>>(guiPanel, "player_information_through_walls");
         initDropDown<OnOffDropdownSelectionChangeHandler<HookContext, player_info_vars::PlayerPositionArrowEnabled>>(guiPanel, "player_info_position");
         initDropDown<PlayerInfoInWorldPlayerPositionArrowColorModeDropdownSelectionChangeHandler<HookContext>>(guiPanel, "player_info_position_color");
+        initDropDown<OnOffDropdownSelectionChangeHandler<HookContext, player_info_vars::PlayerNameEnabled>>(guiPanel, "player_info_name");
+        initDropDown<PlayerInfoInWorldPlayerNameColorModeDropdownSelectionChangeHandler<HookContext>>(guiPanel, "player_info_name_color");
         initDropDown<OnOffDropdownSelectionChangeHandler<HookContext, player_info_vars::PlayerHealthEnabled>>(guiPanel, "player_info_health");
         initDropDown<PlayerInfoInWorldPlayerHealthColorModeDropdownSelectionChangeHandler<HookContext>>(guiPanel, "player_info_health_color");
         initDropDown<OnOffDropdownSelectionChangeHandler<HookContext, player_info_vars::ActiveWeaponIconEnabled>>(guiPanel, "player_info_weapon");
@@ -148,6 +154,8 @@ private:
         setDropDownSelectedIndex(mainMenu, "player_information_through_walls", playerInfoDropDownIndex());
         setDropDownSelectedIndex(mainMenu, "player_info_position", !GET_CONFIG_VAR(player_info_vars::PlayerPositionArrowEnabled));
         setDropDownSelectedIndex(mainMenu, "player_info_position_color", static_cast<int>(GET_CONFIG_VAR(player_info_vars::PlayerPositionArrowColorMode)));
+        setDropDownSelectedIndex(mainMenu, "player_info_name", !GET_CONFIG_VAR(player_info_vars::PlayerNameEnabled));
+        setDropDownSelectedIndex(mainMenu, "player_info_name_color", static_cast<int>(GET_CONFIG_VAR(player_info_vars::PlayerNameColorMode)));
         setDropDownSelectedIndex(mainMenu, "player_info_health", !GET_CONFIG_VAR(player_info_vars::PlayerHealthEnabled));
         setDropDownSelectedIndex(mainMenu, "player_info_health_color", static_cast<int>(GET_CONFIG_VAR(player_info_vars::PlayerHealthColorMode)));
         setDropDownSelectedIndex(mainMenu, "player_info_weapon", !GET_CONFIG_VAR(player_info_vars::ActiveWeaponIconEnabled));
@@ -222,11 +230,26 @@ private:
         updateHueSlider<model_glow_vars::DefuseKitHue>(mainMenu, "model_glow_defuse_kit_hue");
     }
 
+    void initGrenadePredictionTab(auto&& guiPanel) const
+    {
+        initDropDown<OnOffDropdownSelectionChangeHandler<HookContext, grenade_prediction_vars::Enabled>>(guiPanel, "grenade_prediction_enable");
+        registerHueSliderUpdateHandler<grenade_prediction_vars::TrajectoryHue, "grenade_prediction_trajectory_hue">(guiPanel);
+        registerHueSliderUpdateHandler<grenade_prediction_vars::BounceHue, "grenade_prediction_bounce_hue">(guiPanel);
+    }
+
     void updateViewmodelTab(auto&& mainMenu) const noexcept
     {
         setDropDownSelectedIndex(mainMenu, "viewmodel_mod", !GET_CONFIG_VAR(viewmodel_mod_vars::Enabled));
         setDropDownSelectedIndex(mainMenu, "viewmodel_fov_mod", !GET_CONFIG_VAR(viewmodel_mod_vars::ModifyFov));
         updateSlider<viewmodel_mod_vars::Fov>(mainMenu, "viewmodel_fov");
+    }
+
+    void updateGrenadePredictionTab(auto&& mainMenu) const noexcept
+    {
+        setDropDownSelectedIndex(mainMenu, "grenade_prediction_enable", !GET_CONFIG_VAR(grenade_prediction_vars::Enabled));
+        updateHueSlider<grenade_prediction_vars::TrajectoryHue>(mainMenu, "grenade_prediction_trajectory_hue");
+        updateHueSlider<grenade_prediction_vars::BounceHue>(mainMenu, "grenade_prediction_bounce_hue");
+        updateSlider<grenade_prediction_vars::BounceFriction>(mainMenu, "grenade_prediction_bounce_friction");
     }
 
     template <typename ConfigVariable>

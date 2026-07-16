@@ -3,9 +3,11 @@
 #include <cstdint>
 
 #include <CS2/Classes/Entities/C_CSWeaponBase.h>
+#include <CS2/Classes/Entities/WeaponEntities.h>
 #include <CS2/Classes/CCSWeaponBaseVData.h>
 #include <MemoryPatterns/PatternTypes/WeaponPatternTypes.h>
 #include <MemoryPatterns/PatternTypes/WeaponVDataPatternTypes.h>
+#include <Features/Visuals/GrenadePrediction/GrenadeKind.h>
 #include "BaseEntity.h"
 #include "EntityClassifier.h"
 
@@ -59,6 +61,27 @@ public:
         return hookContext.patternSearchResults().template get<OffsetToWeaponName>().of(vData).valueOr(nullptr);
     }
 
+    [[nodiscard]] Optional<cs2::GrenadeKind> grenadeKind() const noexcept
+    {
+        switch (baseEntity().classify().typeIndex) {
+        case EntityTypeInfo::indexOf<cs2::C_Flashbang>(): return cs2::GrenadeKind::Flashbang;
+        case EntityTypeInfo::indexOf<cs2::C_HEGrenade>(): return cs2::GrenadeKind::HEGrenade;
+        case EntityTypeInfo::indexOf<cs2::C_SmokeGrenade>(): return cs2::GrenadeKind::SmokeGrenade;
+        case EntityTypeInfo::indexOf<cs2::C_MolotovGrenade>(): return cs2::GrenadeKind::Molotov;
+        case EntityTypeInfo::indexOf<cs2::C_DecoyGrenade>(): return cs2::GrenadeKind::Decoy;
+        case EntityTypeInfo::indexOf<cs2::C_IncendiaryGrenade>(): return cs2::GrenadeKind::Incendiary;
+        default: break;
+        }
+        const auto name = getName();
+        if (stringsEqual(name, "weapon_flashbang")) return cs2::GrenadeKind::Flashbang;
+        if (stringsEqual(name, "weapon_hegrenade")) return cs2::GrenadeKind::HEGrenade;
+        if (stringsEqual(name, "weapon_smokegrenade")) return cs2::GrenadeKind::SmokeGrenade;
+        if (stringsEqual(name, "weapon_molotov")) return cs2::GrenadeKind::Molotov;
+        if (stringsEqual(name, "weapon_decoy")) return cs2::GrenadeKind::Decoy;
+        if (stringsEqual(name, "weapon_incgrenade")) return cs2::GrenadeKind::Incendiary;
+        return {};
+    }
+
     [[nodiscard]] auto clipAmmo() const noexcept
     {
         return hookContext.patternSearchResults().template get<OffsetToClipAmmo>().of(baseWeapon).toOptional();
@@ -76,6 +99,19 @@ public:
     }
 
 private:
+    [[nodiscard]] static bool stringsEqual(const char* lhs, const char* rhs) noexcept
+    {
+        if (!lhs || !rhs)
+            return false;
+        while (*lhs == *rhs) {
+            if (*lhs == '\0')
+                return true;
+            ++lhs;
+            ++rhs;
+        }
+        return false;
+    }
+
     [[nodiscard]] Optional<float> inaccuracy() const noexcept
     {
         const auto getInaccuracyFn = hookContext.patternSearchResults().template get<PointerToGetInaccuracyFunction>();

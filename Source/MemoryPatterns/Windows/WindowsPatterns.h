@@ -33,6 +33,7 @@
 #include "SceneSystemPatternsWindows.h"
 #include "SdlPatternWindows.h"
 #include "SliderPatternsWindows.h"
+#include "EngineTracePatternsWindows.h"
 #include "SmokeGrenadeProjectilePatternsWindows.h"
 #include "SoundSystemPatternsWindows.h"
 #include "TextEntryPatternsWindows.h"

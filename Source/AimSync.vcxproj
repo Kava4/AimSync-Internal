@@ -242,6 +242,8 @@
     <ClInclude Include="Features\Visuals\PlayerInfoInWorld\ActiveWeaponAmmo\PlayerActiveWeaponAmmoPanel.h" />
     <ClInclude Include="Features\Visuals\PlayerInfoInWorld\ActiveWeaponAmmo\PlayerActiveWeaponAmmoPanelContext.h" />
     <ClInclude Include="Features\Visuals\PlayerInfoInWorld\PlayerHealth\PlayerHealthPanel.h" />
+    <ClInclude Include="Features\Visuals\PlayerInfoInWorld\PlayerNamePanel.h" />
+    <ClInclude Include="Features\Visuals\PlayerInfoInWorld\PlayerNamePanelParams.h" />
     <ClInclude Include="Features\Visuals\PlayerInfoInWorld\PlayerHealth\PlayerHealthPanelContext.h" />
     <ClInclude Include="Features\Visuals\PlayerInfoInWorld\PlayerHealth\PlayerHealthPanelParams.h" />
     <ClInclude Include="Features\Visuals\PlayerInfoInWorld\PlayerInfoContainerPanelParams.h" />
@@ -466,6 +468,20 @@
     <ClInclude Include="MemoryPatterns\Windows\Ui3dPanelPatternsWindows.h" />
     <ClInclude Include="MemoryPatterns\Windows\UiItem3dPanelPatternsWindows.h" />
     <ClInclude Include="MemoryPatterns\Windows\WeaponPatternsWindows.h" />
+    <ClInclude Include="MemoryPatterns\Windows\EngineTracePatternsWindows.h" />
+    <ClInclude Include="MemoryPatterns\PatternTypes\EngineTracePatternTypes.h" />
+    <ClInclude Include="GameClient\EngineTrace\EngineTrace.h" />
+    <ClInclude Include="GameClient\EngineTrace\EngineTraceTypes.h" />
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadeKind.h" />
+    <ClInclude Include="Features\Visuals\GrenadePrediction\Trajectory.h" />
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePredictionParams.h" />
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePredictionConfigVariables.h" />
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePredictionState.h" />
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePredictionCondition.h" />
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePredictionContext.h" />
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadeSimulator.h" />
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePrediction.h" />
+    <ClInclude Include="Utils\Math.h" />
     <ClInclude Include="MemoryPatterns\Windows\WeaponServicesPatternsWindows.h" />
     <ClInclude Include="MemoryPatterns\Windows\WeaponVDataPatternsWindows.h" />
     <ClInclude Include="MemoryPatterns\Windows\WindowsPatterns.h" />
@@ -547,6 +563,7 @@
     <ClInclude Include="UI\Panorama\Tabs\VisualsTab\IntSlider.h" />
     <ClInclude Include="UI\Panorama\Tabs\VisualsTab\PlayerInfoInWorldDropdownSelectionChangeHandler.h" />
     <ClInclude Include="UI\Panorama\Tabs\VisualsTab\PlayerInfoInWorldPlayerHealthColorModeDropdownSelectionChangeHandler.h" />
+    <ClInclude Include="UI\Panorama\Tabs\VisualsTab\PlayerInfoInWorldPlayerNameColorModeDropdownSelectionChangeHandler.h" />
     <ClInclude Include="UI\Panorama\Tabs\VisualsTab\PlayerInfoInWorldPlayerPositionArrowColorModeDropdownSelectionChangeHandler.h" />
     <ClInclude Include="UI\Panorama\Tabs\VisualsTab\PlayerModelGlowColorModeDropdownSelectionChangeHandler.h" />
     <ClInclude Include="UI\Panorama\Tabs\VisualsTab\PlayerModelGlowDropdownSelectionChangeHandler.h" />
@@ -687,7 +704,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <RuntimeLibrary />
-    </ClCompile>
+      <AdditionalOptions>/constexpr:steps2147483647 /constexpr:depth2048 %(AdditionalOptions)</AdditionalOptions>    </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "ConfigVariableTypes.h"
+#include <Features/Visuals/GrenadePrediction/GrenadePredictionConfigVariables.h>
 #include <HookContext/HookContextMacros.h>
 
 template <typename HookContext>
@@ -170,6 +171,11 @@ private:
         configConversion.uint(u8"ColorMode", loadVariable<player_info_vars::PlayerPositionArrowColorMode>(), saveVariable<player_info_vars::PlayerPositionArrowColorMode>());
         configConversion.endObject();
 
+        configConversion.beginObject(u8"PlayerName");
+        configConversion.boolean(u8"Enabled", loadVariable<player_info_vars::PlayerNameEnabled>(), saveVariable<player_info_vars::PlayerNameEnabled>());
+        configConversion.uint(u8"ColorMode", loadVariable<player_info_vars::PlayerNameColorMode>(), saveVariable<player_info_vars::PlayerNameColorMode>());
+        configConversion.endObject();
+
         configConversion.beginObject(u8"Health");
         configConversion.boolean(u8"Enabled", loadVariable<player_info_vars::PlayerHealthEnabled>(), saveVariable<player_info_vars::PlayerHealthEnabled>());
         configConversion.uint(u8"ColorMode", loadVariable<player_info_vars::PlayerHealthColorMode>(), saveVariable<player_info_vars::PlayerHealthColorMode>());
@@ -189,6 +195,13 @@ private:
         configConversion.boolean(u8"Enabled", loadVariable<viewmodel_mod_vars::Enabled>(), saveVariable<viewmodel_mod_vars::Enabled>());
         configConversion.boolean(u8"ModifyFov", loadVariable<viewmodel_mod_vars::ModifyFov>(), saveVariable<viewmodel_mod_vars::ModifyFov>());
         configConversion.uint(u8"Fov", loadVariable<viewmodel_mod_vars::Fov>(), saveVariable<viewmodel_mod_vars::Fov>());
+        configConversion.endObject();
+
+        configConversion.beginObject(u8"GrenadePrediction");
+        configConversion.boolean(u8"Enabled", loadVariable<grenade_prediction_vars::Enabled>(), saveVariable<grenade_prediction_vars::Enabled>());
+        configConversion.uint(u8"TrajectoryHue", loadVariable<grenade_prediction_vars::TrajectoryHue>(), saveVariable<grenade_prediction_vars::TrajectoryHue>());
+        configConversion.uint(u8"BounceHue", loadVariable<grenade_prediction_vars::BounceHue>(), saveVariable<grenade_prediction_vars::BounceHue>());
+        configConversion.uint(u8"BounceFriction", loadVariable<grenade_prediction_vars::BounceFriction>(), saveVariable<grenade_prediction_vars::BounceFriction>());
         configConversion.endObject();
 
         configConversion.endObject();

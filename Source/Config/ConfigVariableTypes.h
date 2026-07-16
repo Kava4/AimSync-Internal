@@ -14,6 +14,7 @@
 #include <Features/Visuals/OutlineGlow/OutlineGlowConfigVariables.h>
 #include <Features/Visuals/PlayerInfoInWorld/PlayerInfoInWorldConfigVariables.h>
 #include <Features/Visuals/ViewmodelMod/ViewmodelModConfigVariables.h>
+#include <Features/Visuals/GrenadePrediction/GrenadePredictionConfigVariables.h>
 #include <Utils/TypeList.h>
 
 using ConfigVariableTypes = TypeList<
@@ -87,6 +88,8 @@ using ConfigVariableTypes = TypeList<
     player_info_vars::OnlyEnemies,
     player_info_vars::PlayerPositionArrowEnabled,
     player_info_vars::PlayerPositionArrowColorMode,
+    player_info_vars::PlayerNameEnabled,
+    player_info_vars::PlayerNameColorMode,
     player_info_vars::PlayerHealthEnabled,
     player_info_vars::PlayerHealthColorMode,
     player_info_vars::ActiveWeaponIconEnabled,
@@ -117,5 +120,9 @@ using ConfigVariableTypes = TypeList<
     skin_changer_vars::PaintKitDeagle,
     skin_changer_vars::PaintKitKnife,
     skin_changer_vars::Wear,
-    BombPlantAlertEnabled
+    BombPlantAlertEnabled,
+    grenade_prediction_vars::Enabled,
+    grenade_prediction_vars::TrajectoryHue,
+    grenade_prediction_vars::BounceHue,
+    grenade_prediction_vars::BounceFriction
 >;

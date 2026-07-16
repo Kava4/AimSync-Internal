@@ -11,6 +11,7 @@
 #include <CS2/Classes/EntitySystem/CGameEntitySystem.h>
 #include <GameClient/EntitySystem/EntityIdentity.h>
 #include <MemoryPatterns/PatternTypes/EntitySystemPatternTypes.h>
+#include <Platform/Macros/IsPlatform.h>
 
 template <typename HookContext>
 class EntitySystem {
@@ -80,6 +81,16 @@ public:
 
     [[nodiscard]] cs2::CEntityClass* findEntityClass(const char* className) const noexcept
     {
+#if IS_WIN64()
+        const auto findEntityClassFn = hookContext.patternSearchResults().template get<FindEntityClassFunctionPointer>();
+        const auto gameEntitySystem = entitySystem();
+        if (!findEntityClassFn || !gameEntitySystem || !className)
+            return nullptr;
+        return findEntityClassFn(gameEntitySystem, className, nullptr);
+#else
+        if (!className)
+            return nullptr;
+
         const auto entityClasses = getEntityClasses();
         if (!entityClasses)
             return nullptr;
@@ -89,6 +100,7 @@ public:
                 return entityClasses->memory[i].value;
         }
         return nullptr;
+#endif
     }
 
 private:
@@ -123,10 +135,12 @@ private:
         return hookContext.patternSearchResults().template get<EntityListOffset>().of(entitySystem()).get();
     }
 
+#if !IS_WIN64()
     [[nodiscard]] auto getEntityClasses() const noexcept
     {
         return hookContext.patternSearchResults().template get<OffsetToEntityClasses>().of(entitySystem()).get();
     }
+#endif
 
     HookContext& hookContext;
 };

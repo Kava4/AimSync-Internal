@@ -19,6 +19,9 @@
     <Filter Include="Features\Visuals">
       <UniqueIdentifier>{3ee30a31-8dbf-4608-8064-4c996ce05980}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Features\Visuals\GrenadePrediction">
+      <UniqueIdentifier>{b2c3d4e5-f6a7-8901-bcde-f12345678901}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Hooks">
       <UniqueIdentifier>{1ee84f1c-3411-4068-816f-186260cb390d}</UniqueIdentifier>
     </Filter>
@@ -195,6 +198,9 @@
     </Filter>
     <Filter Include="GameClient\Entities">
       <UniqueIdentifier>{574b797e-f5ef-47fe-9747-b268a82ec727}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameClient\EngineTrace">
+      <UniqueIdentifier>{a1b2c3d4-e5f6-7890-abcd-ef1234567890}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameClient\EntitySystem">
       <UniqueIdentifier>{f962b6df-d7ad-4ade-b2b8-80d1609e9985}</UniqueIdentifier>
@@ -808,6 +814,48 @@
     <ClInclude Include="MemoryPatterns\Windows\WeaponPatternsWindows.h">
       <Filter>MemoryPatterns\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="MemoryPatterns\Windows\EngineTracePatternsWindows.h">
+      <Filter>MemoryPatterns\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPatterns\PatternTypes\EngineTracePatternTypes.h">
+      <Filter>MemoryPatterns\PatternTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClient\EngineTrace\EngineTrace.h">
+      <Filter>GameClient\EngineTrace</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClient\EngineTrace\EngineTraceTypes.h">
+      <Filter>GameClient\EngineTrace</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadeKind.h">
+      <Filter>Features\Visuals\GrenadePrediction</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\GrenadePrediction\Trajectory.h">
+      <Filter>Features\Visuals\GrenadePrediction</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePredictionParams.h">
+      <Filter>Features\Visuals\GrenadePrediction</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePredictionConfigVariables.h">
+      <Filter>Features\Visuals\GrenadePrediction</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePredictionState.h">
+      <Filter>Features\Visuals\GrenadePrediction</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePredictionCondition.h">
+      <Filter>Features\Visuals\GrenadePrediction</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePredictionContext.h">
+      <Filter>Features\Visuals\GrenadePrediction</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadeSimulator.h">
+      <Filter>Features\Visuals\GrenadePrediction</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\GrenadePrediction\GrenadePrediction.h">
+      <Filter>Features\Visuals\GrenadePrediction</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Math.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
     <ClInclude Include="Utils\PrivateTag.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -1077,6 +1125,12 @@
     </ClInclude>
     <ClInclude Include="Features\Visuals\PlayerInfoInWorld\PlayerHealth\PlayerHealthPanelParams.h">
       <Filter>Features\Visuals\PlayerInfoInWorld\PlayerHealth</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\PlayerInfoInWorld\PlayerNamePanel.h">
+      <Filter>Features\Visuals\PlayerInfoInWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Visuals\PlayerInfoInWorld\PlayerNamePanelParams.h">
+      <Filter>Features\Visuals\PlayerInfoInWorld</Filter>
     </ClInclude>
     <ClInclude Include="Features\Visuals\PlayerInfoInWorld\PlayerPositionArrow\PlayerPositionArrowColorType.h">
       <Filter>Features\Visuals\PlayerInfoInWorld\PlayerPositionArrow</Filter>

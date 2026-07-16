@@ -19,7 +19,7 @@ $.AimSync = (function () {
             rootPanel.visible = false;
             rootPanel.SetReadyForDisplay(false);
             return true;
-          } else if (newPanel.visible === true) {
+          } else if (rootPanel.visible === true) {
             $.DispatchEvent('MainMenuTabShown', 'AimSyncMenuTab');
           }
         }
@@ -236,6 +236,14 @@ $.AimSync = (function () {
     });
 
     $.CreatePanel('Label', viewmodelTabButton, '', { text: "Viewmodel", style: tabLabelStyle });
+
+    var grenadePredictionTabButton = $.CreatePanel('RadioButton', centerContainer, 'grenade_prediction_button', {
+        group: "VisualsNavBar",
+        class: "content-navbar__tabs__btn",
+        onactivate: "$.AimSync.navigateToSubTab('visuals', 'grenade_prediction');"
+    });
+
+    $.CreatePanel('Label', grenadePredictionTabButton, '', { text: "Grenade Pred.", style: tabLabelStyle });
   };
 
   var createCombatNavbar = function () {
@@ -614,6 +622,11 @@ u8R"(
   separator(playerPosition);
   createDropDown(playerPosition, "Player Position Arrow Color", 'visuals', 'player_info_position_color', ['Player / Team Color', 'Team Color']);
 
+  var playerName = createSection(playerInfoTab, 'Player Name');
+  createYesNoDropDown(playerName, "Show Player Name", 'visuals', 'player_info_name');
+  separator(playerName);
+  createDropDown(playerName, "Player Name Color", 'visuals', 'player_info_name_color', ['White', 'Team Color', 'Health-based']);
+
   var playerHealth = createSection(playerInfoTab, 'Player Health');
   createYesNoDropDown(playerHealth, "Show Player Health", 'visuals', 'player_info_health');
   separator(playerHealth);
@@ -840,6 +853,17 @@ u8R"(
   createYesNoDropDown(viewmodelFov, "Modify Viewmodel Fov", 'visuals', 'viewmodel_fov_mod');
   separator(viewmodelFov);
   createSlider(viewmodelFov, "Fov", 'viewmodel_fov', 40, 90);
+
+  var _grenadePredictionTab = createSubTab(visuals, 'grenade_prediction');
+
+  var grenadePredictionMaster = createSection(_grenadePredictionTab, 'Grenade Prediction');
+  createOnOffDropDown(grenadePredictionMaster, "Master Switch", 'visuals', 'grenade_prediction_enable');
+  separator(grenadePredictionMaster);
+  createHueSlider(grenadePredictionMaster, "Trajectory Color", 'grenade_prediction_trajectory_hue', 0, 359);
+  separator(grenadePredictionMaster);
+  createHueSlider(grenadePredictionMaster, "Bounce Color", 'grenade_prediction_bounce_hue', 0, 359);
+  separator(grenadePredictionMaster);
+  createSlider(grenadePredictionMaster, 'Bounce Friction (0 = none, 200 = 0.200)', 'grenade_prediction_bounce_friction', 0, 200);
 
   var sound = createTab('sound');
   

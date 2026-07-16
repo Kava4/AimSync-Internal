@@ -13,6 +13,8 @@ struct C_CSWeaponBase : C_BaseModelEntity {
     using sceneObjectUpdaterHandle = SceneObjectUpdaterHandle_t*;
     using GetInaccuracy = float(C_CSWeaponBase* thisptr, float* movementInaccuracy, float* airSpeedInaccuracy);
     using GetSpread = float(C_CSWeaponBase* thisptr);
+    using m_flThrowStrength = float;
+    using m_bPinPulled = bool;
 };
 
 }

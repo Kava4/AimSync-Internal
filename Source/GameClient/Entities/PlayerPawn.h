@@ -129,6 +129,11 @@ public:
         return hookContext.patternSearchResults().template get<OffsetToIsScoped>().of(playerPawn).toOptional();
     }
 
+    [[nodiscard]] Optional<cs2::Vector> eyeAngles() const noexcept
+    {
+        return hookContext.patternSearchResults().template get<OffsetToEyeAngles>().of(playerPawn).toOptional();
+    }
+
     [[nodiscard]] std::optional<cs2::CEntityIndex> crosshairEntityIndex() const noexcept
     {
         if (!playerPawn)

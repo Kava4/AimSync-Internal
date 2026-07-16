@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Platform/Macros/IsPlatform.h>
+
 #if IS_WIN64()
 #include "Windows/WindowsPatterns.h"
 #elif IS_LINUX()
@@ -20,7 +22,9 @@ struct MemoryPatterns {
     return type<PatternFinders>{patternFinders}; \
 }
 
+#if IS_LINUX()
     MEMORY_PATTERNS(PanelStylePatterns, panelStylePatterns)
+#endif
     MEMORY_PATTERNS(SdlPatterns, sdlPatterns)
 
 #undef MEMORY_PATTERNS
@@ -28,11 +32,14 @@ struct MemoryPatterns {
 
 constexpr auto kClientPatterns = []() consteval {
 #define ADD_PATTERNS(patterns) addPatterns([](auto patternPool) consteval { return patterns::addClientPatterns(patternPool); })
-    constexpr auto builder = PatternPoolBuilder<TempPatternPool<2000, 100>>{}
+    constexpr auto builder = PatternPoolBuilder<TempPatternPool<4000, 155>>{}
         .ADD_PATTERNS(BaseModelEntityPatterns)
         .ADD_PATTERNS(C4Patterns)
         .ADD_PATTERNS(ClientPatterns)
         .ADD_PATTERNS(CvarPatterns)
+#if IS_WIN64()
+        .ADD_PATTERNS(EngineTracePatterns)
+#endif
         .ADD_PATTERNS(EntityPatterns)
         .ADD_PATTERNS(EntitySystemPatterns)
         .ADD_PATTERNS(GameRulesPatterns)
