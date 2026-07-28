@@ -117,4 +117,88 @@ struct WindowsFileSystem {
         std::memcpy(&fileRenameInformationClassEnum, &fileRenameInformationClass, sizeof(fileRenameInformationClass));
         WindowsSyscalls::NtSetInformationFile(fileHandle, &statusBlock, info, sizeof(FILE_RENAME_INFO) + kMaxPathLength * sizeof(wchar_t), fileRenameInformationClassEnum);
     }
+
+    [[nodiscard]] static const wchar_t* stripNtPrefix(const wchar_t* ntPath) noexcept
+    {
+        if (!ntPath)
+            return ntPath;
+        if (ntPath[0] == L'\\' && ntPath[1] == L'?' && ntPath[2] == L'?' && ntPath[3] == L'\\')
+            return ntPath + 4;
+        return ntPath;
+    }
+
+    static bool deleteFile(const wchar_t* ntPath) noexcept
+    {
+        if (!ntPath)
+            return false;
+
+        HANDLE handle;
+        IO_STATUS_BLOCK statusBlock{};
+        const auto pathLength = utils::wcslen(ntPath);
+        UNICODE_STRING fileName{
+            .Length = static_cast<USHORT>(pathLength * sizeof(wchar_t)),
+            .MaximumLength = static_cast<USHORT>(pathLength * sizeof(wchar_t)),
+            .Buffer = const_cast<wchar_t*>(ntPath)
+        };
+        OBJECT_ATTRIBUTES objectAttributes{
+            .Length = sizeof(OBJECT_ATTRIBUTES),
+            .RootDirectory = nullptr,
+            .ObjectName = &fileName,
+            .Attributes = OBJ_CASE_INSENSITIVE,
+            .SecurityDescriptor = nullptr,
+            .SecurityQualityOfService = nullptr
+        };
+
+        if (!NT_SUCCESS(WindowsSyscalls::NtCreateFile(&handle, DELETE | SYNCHRONIZE, &objectAttributes, &statusBlock, nullptr, FILE_ATTRIBUTE_NORMAL, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, FILE_OPEN, FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT, nullptr, 0)))
+            return false;
+
+        struct FileDispositionInformation {
+            BOOLEAN deleteFile;
+        } disposition{.deleteFile = TRUE};
+
+        constexpr std::underlying_type_t<FILE_INFORMATION_CLASS> fileDispositionInformationClass{13};
+        FILE_INFORMATION_CLASS fileDispositionInformationClassEnum{};
+        std::memcpy(&fileDispositionInformationClassEnum, &fileDispositionInformationClass, sizeof(fileDispositionInformationClass));
+        const bool ok = NT_SUCCESS(WindowsSyscalls::NtSetInformationFile(handle, &statusBlock, &disposition, sizeof(disposition), fileDispositionInformationClassEnum));
+        WindowsSyscalls::NtClose(handle);
+        return ok;
+    }
+
+    template <typename Callback>
+    static void forEachCfgFile(const wchar_t* ntDirectoryPath, Callback&& callback) noexcept
+    {
+        if (!ntDirectoryPath)
+            return;
+
+        const wchar_t* dosDir = stripNtPrefix(ntDirectoryPath);
+        wchar_t searchPath[MAX_PATH]{};
+        std::size_t write = 0;
+        while (dosDir[write] != L'\0' && write + 6 < MAX_PATH) {
+            searchPath[write] = dosDir[write];
+            ++write;
+        }
+        if (write == 0 || write + 6 >= MAX_PATH)
+            return;
+        if (searchPath[write - 1] != L'\\')
+            searchPath[write++] = L'\\';
+        searchPath[write++] = L'*';
+        searchPath[write++] = L'.';
+        searchPath[write++] = L'c';
+        searchPath[write++] = L'f';
+        searchPath[write++] = L'g';
+        searchPath[write] = L'\0';
+
+        WIN32_FIND_DATAW findData{};
+        const HANDLE findHandle = FindFirstFileW(searchPath, &findData);
+        if (findHandle == INVALID_HANDLE_VALUE)
+            return;
+
+        do {
+            if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+                continue;
+            callback(findData.cFileName);
+        } while (FindNextFileW(findHandle, &findData));
+
+        FindClose(findHandle);
+    }
 };

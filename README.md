@@ -20,6 +20,7 @@
 | Bunny hop / Auto strafe / Third person | Working |
 | Sound ESP | Working |
 | Inventory / skin changer | **Paused (WIP)** — buy-menu path was unstable |
+| Config manager (create / load / save / delete) | Working |
 | Overlay icon textures / custom font polish | **TODO** |
 
 ---
@@ -55,7 +56,6 @@
 - [ ] Re-enable **inventory / skin changer** with a safer apply pipeline (currently stubbed; crashes on in-game apply)
 - [ ] Optional sidebar **icon textures** (safe deferred load)
 - [ ] Higher-quality **font** without Present-thread file loads that previously crashed
-- [ ] Config UI page (save/load slots) beyond autosave `default.cfg`
 - [ ] Verify / refresh **offsets & patterns** after each CS2 update ([cs2-dumper](https://github.com/a2x/cs2-dumper))
 
 ---
@@ -107,7 +107,9 @@ Rebuild the **loader after the DLL** so the embedded payload stays current.
 
 | Platform | Path |
 |----------|------|
-| Windows | `%appdata%\AimSyncCS2\configs\default.cfg` |
+| Windows | `%appdata%\AimSyncCS2\configs\` |
+
+Named configs are `.cfg` files in that folder (e.g. `default.cfg`, `rage.cfg`). The **Cfg** menu tab can create, load, save, and delete them. Autosave still writes the active config.
 
 ---
 
@@ -132,3 +134,8 @@ For educational / research purposes only. Use at your own risk. You are responsi
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branch naming, PR checklist, and review expectations.
+Use the pull request template when opening a PR against `main`.

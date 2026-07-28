@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cassert>
+#include <cctype>
+#include <cstring>
 #include <BuildConfig.h>
 #include <MemoryAllocation/UniquePtr.h>
 #include <Platform/PlatformPath.h>
@@ -31,10 +33,13 @@ public:
     void init() noexcept
     {
         buildConfigDirectoryPath();
+        setCurrentConfigName("default.cfg");
         buildConfigFilePath(WIN64_LINUX(L"default.cfg", "default.cfg"));
         buildConfigTempFilePath();
         static constinit char8_t fileOperationBuffer[build::kConfigFileBufferSize];
         state().fileOperationBuffer = fileOperationBuffer;
+        refreshConfigList();
+        setStatus("Ready");
     }
 
     template <typename ConfigVariable>
@@ -66,11 +71,185 @@ public:
         });
         scheduleAutoSave();
         hookContext.gui().updateFromConfig();
+        setStatus("Defaults restored");
     }
 
     void scheduleLoad() noexcept
     {
         state().loadScheduled = true;
+    }
+
+    void scheduleSave() noexcept
+    {
+        scheduleAutoSave();
+    }
+
+    [[nodiscard]] const char* currentConfigName() noexcept
+    {
+        return state().currentConfigName;
+    }
+
+    [[nodiscard]] std::size_t configCount() noexcept
+    {
+        return state().configCount;
+    }
+
+    [[nodiscard]] const char* configNameAt(std::size_t index) noexcept
+    {
+        if (index >= state().configCount)
+            return "";
+        return state().configNames[index];
+    }
+
+    [[nodiscard]] const char* statusMessage() noexcept
+    {
+        return state().statusMessage;
+    }
+
+    void refreshConfigList() noexcept
+    {
+        state().configCount = 0;
+#if IS_WIN64()
+        if (!state().pathToConfigDirectory)
+            return;
+
+        WindowsFileSystem::forEachCfgFile(state().pathToConfigDirectory.get(), [this](const wchar_t* fileName) noexcept {
+            if (state().configCount >= ConfigState::kMaxConfigs)
+                return;
+
+            char utf8Name[ConfigState::kMaxConfigNameLength]{};
+            if (!wideAsciiToUtf8(fileName, utf8Name, sizeof(utf8Name)))
+                return;
+            if (!isValidConfigFileName(utf8Name))
+                return;
+
+            copyCString(state().configNames[state().configCount], ConfigState::kMaxConfigNameLength, utf8Name);
+            ++state().configCount;
+        });
+#endif
+        ensureDefaultListed();
+    }
+
+    bool loadConfigByName(const char* utf8Name) noexcept
+    {
+        char normalized[ConfigState::kMaxConfigNameLength]{};
+        if (!normalizeConfigName(utf8Name, normalized, sizeof(normalized))) {
+            setStatus("Invalid config name");
+            return false;
+        }
+        if (state().currentFileOperation != ConfigFileOperation::None) {
+            setStatus("Busy — try again");
+            return false;
+        }
+
+        wchar_t wideName[ConfigState::kMaxConfigNameLength]{};
+        if (!utf8AsciiToWide(normalized, wideName, ConfigState::kMaxConfigNameLength)) {
+            setStatus("Invalid config name");
+            return false;
+        }
+
+        setCurrentConfigName(normalized);
+        buildConfigFilePath(wideName);
+        buildConfigTempFilePath();
+        scheduleLoad();
+        setStatus("Loading...");
+        return true;
+    }
+
+    bool saveActiveConfig() noexcept
+    {
+        if (state().currentFileOperation != ConfigFileOperation::None) {
+            setStatus("Busy — try again");
+            return false;
+        }
+        scheduleAutoSave();
+        setStatus("Saving...");
+        return true;
+    }
+
+    bool createAndSaveConfig(const char* utf8Name) noexcept
+    {
+        char normalized[ConfigState::kMaxConfigNameLength]{};
+        if (!normalizeConfigName(utf8Name, normalized, sizeof(normalized))) {
+            setStatus("Use a-z, 0-9, _ or -");
+            return false;
+        }
+        if (state().currentFileOperation != ConfigFileOperation::None) {
+            setStatus("Busy — try again");
+            return false;
+        }
+
+        wchar_t wideName[ConfigState::kMaxConfigNameLength]{};
+        if (!utf8AsciiToWide(normalized, wideName, ConfigState::kMaxConfigNameLength)) {
+            setStatus("Invalid config name");
+            return false;
+        }
+
+        setCurrentConfigName(normalized);
+        buildConfigFilePath(wideName);
+        buildConfigTempFilePath();
+        scheduleAutoSave();
+        refreshConfigList();
+        setStatus("Created / saving...");
+        return true;
+    }
+
+    bool deleteConfigByName(const char* utf8Name) noexcept
+    {
+        char normalized[ConfigState::kMaxConfigNameLength]{};
+        if (!normalizeConfigName(utf8Name, normalized, sizeof(normalized))) {
+            setStatus("Invalid config name");
+            return false;
+        }
+        if (std::strcmp(normalized, "default.cfg") == 0) {
+            setStatus("Cannot delete default.cfg");
+            return false;
+        }
+        if (state().currentFileOperation != ConfigFileOperation::None) {
+            setStatus("Busy — try again");
+            return false;
+        }
+
+#if IS_WIN64()
+        if (!state().pathToConfigDirectory)
+            return false;
+
+        wchar_t wideName[ConfigState::kMaxConfigNameLength]{};
+        if (!utf8AsciiToWide(normalized, wideName, ConfigState::kMaxConfigNameLength))
+            return false;
+
+        const std::basic_string_view directory{state().pathToConfigDirectory.get(), utils::wcslen(state().pathToConfigDirectory.get())};
+        const auto pathLength = directory.length() + 1 + utils::wcslen(wideName) + 1;
+        auto fullPath = mem::makeUniqueForOverwrite<wchar_t[]>(pathLength);
+        if (!fullPath)
+            return false;
+
+        std::size_t writeIndex{0};
+        std::ranges::copy(directory, fullPath.get() + writeIndex);
+        writeIndex += directory.length();
+        fullPath.get()[writeIndex++] = L'\\';
+        const auto nameLen = utils::wcslen(wideName);
+        std::ranges::copy(wideName, wideName + nameLen, fullPath.get() + writeIndex);
+        writeIndex += nameLen;
+        fullPath.get()[writeIndex] = L'\0';
+
+        if (!WindowsFileSystem::deleteFile(fullPath.get())) {
+            setStatus("Delete failed");
+            return false;
+        }
+
+        const bool deletingActive = std::strcmp(state().currentConfigName, normalized) == 0;
+        refreshConfigList();
+        if (deletingActive)
+            loadConfigByName("default.cfg");
+        else
+            setStatus("Deleted");
+        return true;
+#else
+        (void)normalized;
+        setStatus("Delete unsupported");
+        return false;
+#endif
     }
 
     void update()
@@ -134,6 +313,123 @@ private:
         return hookContext.configState();
     }
 
+    static void copyCString(char* dest, std::size_t destSize, const char* src) noexcept
+    {
+        if (!dest || destSize == 0)
+            return;
+        if (!src) {
+            dest[0] = '\0';
+            return;
+        }
+        std::size_t i = 0;
+        for (; src[i] != '\0' && i + 1 < destSize; ++i)
+            dest[i] = src[i];
+        dest[i] = '\0';
+    }
+
+    void setStatus(const char* message) noexcept
+    {
+        copyCString(state().statusMessage, ConfigState::kStatusMessageLength, message ? message : "");
+    }
+
+    void setCurrentConfigName(const char* name) noexcept
+    {
+        copyCString(state().currentConfigName, ConfigState::kMaxConfigNameLength, name ? name : "default.cfg");
+    }
+
+    void ensureDefaultListed() noexcept
+    {
+        for (std::size_t i = 0; i < state().configCount; ++i) {
+            if (std::strcmp(state().configNames[i], "default.cfg") == 0)
+                return;
+        }
+        if (state().configCount >= ConfigState::kMaxConfigs)
+            return;
+        copyCString(state().configNames[state().configCount], ConfigState::kMaxConfigNameLength, "default.cfg");
+        ++state().configCount;
+    }
+
+    [[nodiscard]] static bool isValidConfigFileName(const char* name) noexcept
+    {
+        if (!name || !*name)
+            return false;
+        const auto len = std::strlen(name);
+        if (len < 5 || len >= ConfigState::kMaxConfigNameLength)
+            return false;
+        if (std::strcmp(name + (len - 4), ".cfg") != 0)
+            return false;
+        for (std::size_t i = 0; i < len - 4; ++i) {
+            const unsigned char c = static_cast<unsigned char>(name[i]);
+            if (!(std::isalnum(c) || c == '_' || c == '-'))
+                return false;
+        }
+        return true;
+    }
+
+    [[nodiscard]] static bool normalizeConfigName(const char* input, char* out, std::size_t outSize) noexcept
+    {
+        if (!input || !out || outSize < 6)
+            return false;
+
+        char temp[ConfigState::kMaxConfigNameLength]{};
+        std::size_t write = 0;
+        for (std::size_t i = 0; input[i] != '\0' && write + 1 < sizeof(temp); ++i) {
+            const unsigned char c = static_cast<unsigned char>(input[i]);
+            if (c == ' ')
+                continue;
+            if (!(std::isalnum(c) || c == '_' || c == '-' || c == '.'))
+                return false;
+            temp[write++] = static_cast<char>(c);
+        }
+        temp[write] = '\0';
+        if (write == 0)
+            return false;
+
+        if (write < 4 || std::strcmp(temp + (write - 4), ".cfg") != 0) {
+            if (write + 4 >= sizeof(temp))
+                return false;
+            temp[write++] = '.';
+            temp[write++] = 'c';
+            temp[write++] = 'f';
+            temp[write++] = 'g';
+            temp[write] = '\0';
+        }
+
+        if (!isValidConfigFileName(temp))
+            return false;
+        copyCString(out, outSize, temp);
+        return true;
+    }
+
+    [[nodiscard]] static bool utf8AsciiToWide(const char* utf8, wchar_t* wide, std::size_t wideCount) noexcept
+    {
+        if (!utf8 || !wide || wideCount == 0)
+            return false;
+        std::size_t i = 0;
+        for (; utf8[i] != '\0' && i + 1 < wideCount; ++i) {
+            const unsigned char c = static_cast<unsigned char>(utf8[i]);
+            if (c >= 128)
+                return false;
+            wide[i] = static_cast<wchar_t>(c);
+        }
+        wide[i] = L'\0';
+        return i > 0;
+    }
+
+    [[nodiscard]] static bool wideAsciiToUtf8(const wchar_t* wide, char* utf8, std::size_t utf8Count) noexcept
+    {
+        if (!wide || !utf8 || utf8Count == 0)
+            return false;
+        std::size_t i = 0;
+        for (; wide[i] != L'\0' && i + 1 < utf8Count; ++i) {
+            if (wide[i] > 127)
+                return false;
+            utf8[i] = static_cast<char>(wide[i]);
+        }
+        utf8[i] = '\0';
+        return i > 0;
+    }
+
     void loadFromFile() noexcept
     {
         if (!state().pathToConfigFile)
@@ -172,6 +468,7 @@ private:
         
         assert(readBytes == 0 || (conversionState.nestingLevel == 0 && conversionState.indexInNestingLevel[0] == 1));
         hookContext.gui().updateFromConfig();
+        setStatus(readBytes == 0 ? "Loaded (empty/new)" : "Loaded");
     }
 
     void prepareSaveToFile()
@@ -199,6 +496,10 @@ private:
             if (WindowsFileSystem::writeFile(handle, 0, state().fileOperationBuffer, numberOfBytesToWrite) == numberOfBytesToWrite)
                 WindowsFileSystem::renameFile(handle, state().pathToConfigFile.get());
             WindowsSyscalls::NtClose(handle);
+            refreshConfigList();
+            setStatus("Saved");
+        } else {
+            setStatus("Save failed");
         }
 #elif IS_LINUX()
         mkdir(hookContext.aimsyncDirectoryPath().get(), 0777);

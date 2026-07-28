@@ -31,6 +31,8 @@
 #include <ThirdParty/ImGui/imgui.h>
 #include <ThirdParty/ImGui/imgui_internal.h>
 
+#include <cstring>
+
 // Forward decl — avoid circular include with Dx11Menu.h
 void dx11MenuRequestUnload() noexcept;
 
@@ -389,15 +391,100 @@ inline void drawMiscPage(HookContext<GlobalContext>& hookContext) noexcept
     ImGui::Columns(1);
 }
 
-inline void drawConfigPage(HookContext<GlobalContext>&) noexcept
+inline void drawConfigPage(HookContext<GlobalContext>& hookContext) noexcept
 {
+    static char newConfigName[48]{};
+    static int selectedIndex = 0;
+    static bool listNeedsRefresh = true;
+
+    auto config = hookContext.config();
+
+    if (listNeedsRefresh) {
+        config.refreshConfigList();
+        listNeedsRefresh = false;
+        selectedIndex = 0;
+        for (std::size_t i = 0; i < config.configCount(); ++i) {
+            if (std::strcmp(config.configNameAt(i), config.currentConfigName()) == 0) {
+                selectedIndex = static_cast<int>(i);
+                break;
+            }
+        }
+    }
+
     ImGui::SetCursorPos(ImVec2{15.0f, 24.0f});
-    gradientText("Config");
+    gradientText("Config Manager");
+
     ImGui::SetCursorPosX(25.0f);
-    ImGui::TextWrapped("AimSync uses its built-in config autosave. Inventory Changer is paused.");
+    ImGui::Text("Active: %s", config.currentConfigName());
+    ImGui::SetCursorPosX(25.0f);
+    ImGui::TextDisabled("%s", config.statusMessage());
+    ImGui::Spacing();
+
+    ImGui::SetCursorPosX(25.0f);
+    ImGui::BeginChild("ConfigList", ImVec2{320.0f, 210.0f}, true);
+    {
+        const int count = static_cast<int>(config.configCount());
+        for (int i = 0; i < count; ++i) {
+            const bool isActive = std::strcmp(config.configNameAt(static_cast<std::size_t>(i)), config.currentConfigName()) == 0;
+            if (ImGui::Selectable(config.configNameAt(static_cast<std::size_t>(i)), selectedIndex == i))
+                selectedIndex = i;
+            if (isActive) {
+                ImGui::SameLine();
+                ImGui::TextDisabled("(active)");
+            }
+        }
+        if (count == 0)
+            ImGui::TextDisabled("No configs yet");
+    }
+    ImGui::EndChild();
+
     ImGui::Spacing();
     ImGui::SetCursorPosX(25.0f);
-    ImGui::TextDisabled("AimSync Internal — DX11 overlay");
+    if (ImGui::Button("Refresh", ImVec2{90.0f, 26.0f}))
+        listNeedsRefresh = true;
+
+    ImGui::SameLine();
+    if (ImGui::Button("Load", ImVec2{90.0f, 26.0f})) {
+        if (selectedIndex >= 0 && static_cast<std::size_t>(selectedIndex) < config.configCount())
+            config.loadConfigByName(config.configNameAt(static_cast<std::size_t>(selectedIndex)));
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Save", ImVec2{90.0f, 26.0f}))
+        config.saveActiveConfig();
+
+    ImGui::SetCursorPosX(25.0f);
+    if (ImGui::Button("Delete", ImVec2{90.0f, 26.0f})) {
+        if (selectedIndex >= 0 && static_cast<std::size_t>(selectedIndex) < config.configCount()) {
+            config.deleteConfigByName(config.configNameAt(static_cast<std::size_t>(selectedIndex)));
+            listNeedsRefresh = true;
+        }
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Defaults", ImVec2{90.0f, 26.0f}))
+        config.restoreDefaults();
+
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+
+    ImGui::SetCursorPosX(25.0f);
+    ImGui::TextUnformatted("New config");
+    ImGui::SetCursorPosX(25.0f);
+    ImGui::SetNextItemWidth(220.0f);
+    ImGui::InputTextWithHint("##newcfg", "name (e.g. rage)", newConfigName, sizeof(newConfigName));
+    ImGui::SameLine();
+    if (ImGui::Button("Create", ImVec2{90.0f, 0.0f})) {
+        if (config.createAndSaveConfig(newConfigName)) {
+            newConfigName[0] = '\0';
+            listNeedsRefresh = true;
+        }
+    }
+
+    ImGui::Spacing();
+    ImGui::SetCursorPosX(25.0f);
+    ImGui::TextWrapped("Configs live in %%appdata%%\\AimSyncCS2\\configs\\. Autosave still updates the active file.");
 }
 
 inline void draw(HookContext<GlobalContext>& hookContext) noexcept
