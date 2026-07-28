@@ -16,8 +16,13 @@
 #include <GameClient/Entities/PreviewPlayer.h>
 #include <Features/Combat/SniperRifles/NoScopeInaccuracyVis/NoScopeInaccuracyVis.h>
 #include <Features/Combat/Aimbot/Aimbot.h>
+#include <Features/Combat/NoRecoil/NoRecoil.h>
+#include <Features/Combat/NoSpread/NoSpread.h>
 #include <Features/Combat/Triggerbot/Triggerbot.h>
-#include <Features/Inventory/SkinChanger/SkinChanger.h>
+#include <Features/Inventory/InventoryChanger/InventoryChanger.h>
+#include <Features/Misc/AutoStrafe/AutoStrafe.h>
+#include <Features/Misc/BunnyHop/BunnyHop.h>
+#include <Features/Misc/ThirdPerson/ThirdPerson.h>
 #include <Features/Hud/DefusingAlert/DefusingAlert.h>
 #include <Features/Hud/KillfeedPreserver/KillfeedPreserver.h>
 #include <Features/Sound/SoundFeatures.h>

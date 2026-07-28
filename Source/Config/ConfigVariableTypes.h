@@ -2,8 +2,13 @@
 
 #include <Features/Combat/SniperRifles/NoScopeInaccuracyVis/NoScopeInaccuracyVisConfigVariables.h>
 #include <Features/Combat/Aimbot/AimbotConfigVariables.h>
+#include <Features/Combat/NoRecoil/NoRecoilConfigVariables.h>
+#include <Features/Combat/NoSpread/NoSpreadConfigVariables.h>
 #include <Features/Combat/Triggerbot/TriggerbotConfigVariables.h>
-#include <Features/Inventory/SkinChanger/SkinChangerConfigVariables.h>
+#include <Features/Misc/BunnyHop/BunnyHopConfigVariables.h>
+#include <Features/Misc/AutoStrafe/AutoStrafeConfigVariables.h>
+#include <Features/Misc/ThirdPerson/ThirdPersonConfigVariables.h>
+#include <Features/Inventory/InventoryChanger/InventoryChangerConfigVariables.h>
 #include <Features/Hud/BombPlantAlert/BombPlantAlertConfigVariables.h>
 #include <Features/Hud/BombTimer/BombTimerConfigVariables.h>
 #include <Features/Hud/DefusingAlert/DefusingAlertConfigVariables.h>
@@ -12,6 +17,7 @@
 #include <Features/Sound/SoundVisualizationConfigVariables.h>
 #include <Features/Visuals/ModelGlow/ModelGlowConfigVariables.h>
 #include <Features/Visuals/OutlineGlow/OutlineGlowConfigVariables.h>
+#include <Features/Visuals/PlayerEsp/PlayerEspConfigVariables.h>
 #include <Features/Visuals/PlayerInfoInWorld/PlayerInfoInWorldConfigVariables.h>
 #include <Features/Visuals/ViewmodelMod/ViewmodelModConfigVariables.h>
 #include <Features/Visuals/GrenadePrediction/GrenadePredictionConfigVariables.h>
@@ -55,6 +61,14 @@ using ConfigVariableTypes = TypeList<
     model_glow_vars::DroppedBombHue,
     model_glow_vars::TickingBombHue,
     model_glow_vars::DefuseKitHue,
+    player_esp_vars::Enabled,
+    player_esp_vars::OnlyEnemies,
+    player_esp_vars::ShowBox,
+    player_esp_vars::ShowSkeleton,
+    player_esp_vars::ShowHeadDot,
+    player_esp_vars::ShowHealthBar,
+    player_esp_vars::VisibilityCheck,
+    player_esp_vars::BoxType,
     outline_glow_vars::Enabled,
     outline_glow_vars::GlowDefuseKits,
     outline_glow_vars::GlowDroppedBomb,
@@ -108,18 +122,36 @@ using ConfigVariableTypes = TypeList<
     aimbot_vars::TeamCheck,
     aimbot_vars::VisibilityCheck,
     aimbot_vars::RecoilControl,
+    aimbot_vars::OnlyWhenScoped,
+    aimbot_vars::DisableWhenFlashed,
+    aimbot_vars::RequireHoldKey,
+    aimbot_vars::DrawFov,
     aimbot_vars::Fov,
     aimbot_vars::Smoothness,
+    aimbot_vars::Hitbox,
+    no_recoil_vars::Enabled,
+    no_recoil_vars::Strength,
+    no_spread_vars::Enabled,
     triggerbot_vars::Enabled,
     triggerbot_vars::TeamCheck,
+    triggerbot_vars::OnlyWhenScoped,
+    triggerbot_vars::DisableWhenFlashed,
     triggerbot_vars::DelayMs,
-    skin_changer_vars::Enabled,
-    skin_changer_vars::PaintKitAK47,
-    skin_changer_vars::PaintKitM4A1S,
-    skin_changer_vars::PaintKitAWP,
-    skin_changer_vars::PaintKitDeagle,
-    skin_changer_vars::PaintKitKnife,
-    skin_changer_vars::Wear,
+    bunnyhop_vars::Enabled,
+    autostrafe_vars::Enabled,
+    thirdperson_vars::Enabled,
+    thirdperson_vars::Distance,
+    inventory_changer_vars::Enabled,
+    inventory_changer_vars::AkSkin,
+    inventory_changer_vars::M4Skin,
+    inventory_changer_vars::AwpSkin,
+    inventory_changer_vars::DeagleSkin,
+    inventory_changer_vars::KnifeSkin,
+    inventory_changer_vars::KnifeType,
+    inventory_changer_vars::Wear,
+    inventory_changer_vars::Seed,
+    inventory_changer_vars::StatTrak,
+    inventory_changer_vars::ApplyRequested,
     BombPlantAlertEnabled,
     grenade_prediction_vars::Enabled,
     grenade_prediction_vars::TrajectoryHue,

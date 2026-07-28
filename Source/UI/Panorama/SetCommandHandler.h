@@ -2,8 +2,9 @@
 
 #include <Features/Combat/SniperRifles/NoScopeInaccuracyVis/NoScopeInaccuracyVisConfigVariables.h>
 #include <Features/Combat/Aimbot/AimbotConfigVariables.h>
+#include <Features/Combat/NoRecoil/NoRecoilConfigVariables.h>
 #include <Features/Combat/Triggerbot/TriggerbotConfigVariables.h>
-#include <Features/Inventory/SkinChanger/SkinChangerConfigVariables.h>
+#include <Features/Inventory/InventoryChanger/InventoryChangerConfigVariables.h>
 #include <Features/Visuals/PlayerInfoInWorld/PlayerInfoInWorld.h>
 #include <Features/Visuals/GrenadePrediction/GrenadePredictionConfigVariables.h>
 #include <GameClient/Panorama/Slider.h>
@@ -47,22 +48,21 @@ private:
             handleIntSlider<aimbot_vars::Smoothness>("aimbot_smooth");
         } else if (feature == "aimbot_smooth_text") {
             handleIntSliderTextEntry<aimbot_vars::Smoothness>("aimbot_smooth");
+        } else if (feature == "no_recoil_strength") {
+            handleIntSlider<no_recoil_vars::Strength>("no_recoil_strength");
+        } else if (feature == "no_recoil_strength_text") {
+            handleIntSliderTextEntry<no_recoil_vars::Strength>("no_recoil_strength");
         } else if (feature == "triggerbot_delay") {
             handleIntSlider<triggerbot_vars::DelayMs>("triggerbot_delay");
         } else if (feature == "triggerbot_delay_text") {
             handleIntSliderTextEntry<triggerbot_vars::DelayMs>("triggerbot_delay");
-        } else if (feature == "skin_paint_ak47_text") {
-            handleUint16TextEntry<skin_changer_vars::PaintKitAK47>("skin_paint_ak47");
-        } else if (feature == "skin_paint_m4a1s_text") {
-            handleUint16TextEntry<skin_changer_vars::PaintKitM4A1S>("skin_paint_m4a1s");
-        } else if (feature == "skin_paint_awp_text") {
-            handleUint16TextEntry<skin_changer_vars::PaintKitAWP>("skin_paint_awp");
-        } else if (feature == "skin_paint_deagle_text") {
-            handleUint16TextEntry<skin_changer_vars::PaintKitDeagle>("skin_paint_deagle");
-        } else if (feature == "skin_paint_knife_text") {
-            handleUint16TextEntry<skin_changer_vars::PaintKitKnife>("skin_paint_knife");
         } else if (feature == "skin_wear_text") {
-            handleUint16TextEntry<skin_changer_vars::Wear>("skin_wear");
+            handleUint16TextEntry<inventory_changer_vars::Wear>("skin_wear");
+        } else if (feature == "skin_seed_text") {
+            handleUint16TextEntry<inventory_changer_vars::Seed>("skin_seed");
+        } else if (feature == "skin_apply") {
+            hookContext.config().template setVariable<inventory_changer_vars::ApplyRequested>(true);
+            hookContext.featuresStates().inventoryChangerState.seeded = false;
         }
     }
 
@@ -101,7 +101,6 @@ private:
             return;
 
         hookContext.config().template setVariable<ConfigVariable>(typename ConfigVariable::ValueType{value});
-        hookContext.featuresStates().skinChangerState.forceFullUpdate = true;
         updateTextEntry(textEntryId, value);
     }
 

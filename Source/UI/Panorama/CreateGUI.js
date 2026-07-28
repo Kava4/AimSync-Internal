@@ -271,6 +271,14 @@ $.AimSync = (function () {
 
     $.CreatePanel('Label', aimbotTabButton, '', { text: "Aimbot", style: tabLabelStyle });
 
+    var noRecoilTabButton = $.CreatePanel('RadioButton', centerContainer, 'no_recoil_button', {
+      group: "CombatNavBar",
+      class: "content-navbar__tabs__btn",
+      onactivate: "$.AimSync.navigateToSubTab('combat', 'no_recoil');"
+    });
+
+    $.CreatePanel('Label', noRecoilTabButton, '', { text: "No Recoil", style: tabLabelStyle });
+
     var triggerbotTabButton = $.CreatePanel('RadioButton', centerContainer, 'triggerbot_button', {
       group: "CombatNavBar",
       class: "content-navbar__tabs__btn",
@@ -576,9 +584,21 @@ u8R"(
   separator(aimbot);
   createYesNoDropDown(aimbot, "Recoil Control", 'combat', 'aimbot_rcs');
   separator(aimbot);
+  createYesNoDropDown(aimbot, "Only When Scoped", 'combat', 'aimbot_scoped_only');
+  separator(aimbot);
+  createYesNoDropDown(aimbot, "Disable When Flashed", 'combat', 'aimbot_no_flash');
+  separator(aimbot);
   createSlider(aimbot, "FOV", 'aimbot_fov', 1, 30, 'combat');
   separator(aimbot);
   createSlider(aimbot, "Smoothness", 'aimbot_smooth', 1, 50, 'combat');
+
+  var noRecoilTab = createSubTab(combat, 'no_recoil');
+  var noRecoil = createSection(noRecoilTab, 'No Recoil');
+  createOnOffDropDown(noRecoil, "Enable No Recoil", 'combat', 'no_recoil_enable');
+  separator(noRecoil);
+  createSlider(noRecoil, "Strength [%]", 'no_recoil_strength', 1, 100, 'combat');
+  separator(noRecoil);
+  createOnOffDropDown(noRecoil, "No Spread", 'combat', 'no_spread_enable');
 
   var triggerbotTab = createSubTab(combat, 'triggerbot');
   var triggerbot = createSection(triggerbotTab, 'Triggerbot');
@@ -586,10 +606,33 @@ u8R"(
   separator(triggerbot);
   createYesNoDropDown(triggerbot, "Ignore Teammates", 'combat', 'triggerbot_team_check');
   separator(triggerbot);
+  createYesNoDropDown(triggerbot, "Only When Scoped", 'combat', 'triggerbot_scoped_only');
+  separator(triggerbot);
+  createYesNoDropDown(triggerbot, "Disable When Flashed", 'combat', 'triggerbot_no_flash');
+  separator(triggerbot);
   createSlider(triggerbot, "Delay [ms]", 'triggerbot_delay', 0, 250, 'combat');
 
   var skinsTab = createSubTab(combat, 'skins');
-  createWipSection(skinsTab, 'Skin Changer');
+  var inventorySection = createSection(skinsTab, 'Inventory Changer');
+  createOnOffDropDown(inventorySection, "Enable Inventory Changer", 'combat', 'inventory_enable');
+  separator(inventorySection);
+  createDropDown(inventorySection, "AK-47", 'combat', 'inventory_ak_skin', ["Off", "Redline", "Vulcan", "Aquamarine Revenge", "Fuel Injector", "Bloodsport", "Neon Revolution", "The Empress", "Legion of Anubis", "Nightwish"]);
+  createDropDown(inventorySection, "M4A1-S", 'combat', 'inventory_m4_skin', ["Off", "Hyper Beast", "Mecha Industries", "Player Two", "Printstream", "Nightmare"]);
+  createDropDown(inventorySection, "AWP", 'combat', 'inventory_awp_skin', ["Off", "Asiimov", "Hyper Beast", "Containment Breach", "Neo-Noir", "Chrome Cannon", "Dragon Lore"]);
+  createDropDown(inventorySection, "Desert Eagle", 'combat', 'inventory_deagle_skin', ["Off", "Blaze", "Conspiracy", "Kumicho Dragon", "Printstream", "Ocean Drive"]);
+  createDropDown(inventorySection, "Knife", 'combat', 'inventory_knife_type', ["Karambit", "M9 Bayonet", "Bayonet", "Butterfly", "Talon", "Skeleton"]);
+  createDropDown(inventorySection, "Knife Skin", 'combat', 'inventory_knife_skin', ["Off", "Doppler", "Marble Fade", "Tiger Tooth", "Fade", "Slaughter", "Crimson Web"]);
+  createPaintKitTextEntry(inventorySection, "Wear 1-1000", 'skin_wear');
+  createPaintKitTextEntry(inventorySection, "Seed", 'skin_seed');
+  createYesNoDropDown(inventorySection, "StatTrak", 'combat', 'inventory_stattrak');
+  separator(inventorySection);
+  var applyContainer = $.CreatePanel('Panel', inventorySection, '', { class: "SettingsMenuDropdownContainer" });
+  var applyBtn = $.CreatePanel('Button', applyContainer, 'skin_apply_button', {
+    class: "PopupButton White",
+    style: "horizontal-align: right; margin-right: 8px;",
+    onactivate: "$.AimSync.addCommand('set', 'combat/skin_apply/1');"
+  });
+  $.CreatePanel('Label', applyBtn, '', { text: "Apply to Inventory" });
 
   $.AimSync.navigateToSubTab('combat', 'sniper_rifles');
 

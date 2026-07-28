@@ -12,6 +12,8 @@ namespace cs2
 
 CONVAR(mp_teammates_are_enemies, bool);
 CONVAR(viewmodel_fov, float);
+CONVAR(cam_idealdist, float);
+CONVAR(c_thirdpersonshoulder, bool);
 CONVAR(cl_crosshaircolor, int);
 CONVAR(cl_crosshaircolor_r, int);
 CONVAR(cl_crosshaircolor_g, int);

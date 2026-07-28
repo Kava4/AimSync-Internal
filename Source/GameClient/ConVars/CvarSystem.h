@@ -35,6 +35,23 @@ public:
         return getValue<ConVarType>(hookContext.getConVarsBase().template getConVar<ConVarType>());
     }
 
+    template <typename ConVarType>
+    void setConVarValue(typename ConVarType::ValueType value) const noexcept
+    {
+        auto* conVar = hookContext.getConVarsBase().template getConVar<ConVarType>();
+        if (!conVar)
+            conVar = findConVar(ConVarType::kName);
+        if (!conVar)
+            return;
+
+        if (!hookContext.patternSearchResults().template get<OffsetToConVarValueType>().of(conVar).toOptional().equal(conVarValueTypeForType<typename ConVarType::ValueType>()).valueOr(false))
+            return;
+
+        const auto pointerToValue = hookContext.patternSearchResults().template get<OffsetToConVarValue>().of(conVar).get();
+        if (pointerToValue)
+            std::memcpy(pointerToValue, &value, sizeof(value));
+    }
+
 private:
     template <typename ConVarType>
     [[nodiscard]] std::optional<typename ConVarType::ValueType> getValue(cs2::ConVar* conVar) const

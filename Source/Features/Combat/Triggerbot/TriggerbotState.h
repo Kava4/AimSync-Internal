@@ -1,8 +1,9 @@
 #pragma once
 
 struct TriggerbotState {
-    bool waitingToFire = false;
-    bool justFired = false;
-    float fireTime = 0.f;
-    int holdFramesLeft = 0;
+    bool waitingToFire{false};
+    bool justFired{false};
+    bool forcedAttack{false};
+    int holdFramesLeft{0};
+    float fireTime{0.0f};
 };

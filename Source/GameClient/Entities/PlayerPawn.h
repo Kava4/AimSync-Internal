@@ -13,6 +13,7 @@
 #include <CS2/Combat/CombatOffsets.h>
 #include <GameClient/Entities/TeamNumber.h>
 #include <GameClient/EntitySystem/EntitySystem.h>
+#include <MemoryPatterns/PatternTypes/EntityPatternTypes.h>
 #include <MemoryPatterns/PatternTypes/PlayerPawnPatternTypes.h>
 #include <Utils/ColorUtils.h>
 
@@ -134,6 +135,19 @@ public:
         return hookContext.patternSearchResults().template get<OffsetToEyeAngles>().of(playerPawn).toOptional();
     }
 
+    [[nodiscard]] bool isOnGround() const noexcept
+    {
+        if (!playerPawn)
+            return false;
+        const auto flags = *reinterpret_cast<const std::uint32_t*>(reinterpret_cast<const std::byte*>(playerPawn) + cs2::combat_offsets::kFlags);
+        return (flags & cs2::combat_offsets::kFlagOnGround) != 0;
+    }
+
+    [[nodiscard]] bool isFlashed() const noexcept
+    {
+        return getRemainingFlashBangTime() > 0.0f;
+    }
+
     [[nodiscard]] std::optional<cs2::CEntityIndex> crosshairEntityIndex() const noexcept
     {
         if (!playerPawn)
@@ -147,9 +161,16 @@ public:
         const auto origin = baseEntity().absOrigin();
         if (!origin.hasValue())
             return {};
-        const auto* const viewOffset = reinterpret_cast<const cs2::Vector*>(reinterpret_cast<const std::byte*>(playerPawn) + cs2::combat_offsets::kViewOffset);
+
+        Optional<cs2::Vector> viewOffset = hookContext.patternSearchResults().template get<OffsetToViewOffset>().of(playerPawn).toOptional();
+        if (!viewOffset.hasValue()) {
+            const auto* const fallback = reinterpret_cast<const cs2::Vector*>(reinterpret_cast<const std::byte*>(playerPawn) + cs2::combat_offsets::kViewOffset);
+            viewOffset = *fallback;
+        }
+
         const auto& pos = origin.value();
-        return cs2::Vector{pos.x + viewOffset->x, pos.y + viewOffset->y, pos.z + viewOffset->z};
+        const auto& offset = viewOffset.value();
+        return cs2::Vector{pos.x + offset.x, pos.y + offset.y, pos.z + offset.z};
     }
 
     [[nodiscard]] Optional<int> shotsFired() const noexcept
@@ -166,7 +187,25 @@ public:
         const auto* const services = *reinterpret_cast<void* const*>(reinterpret_cast<const std::byte*>(playerPawn) + cs2::combat_offsets::kAimPunchServices);
         if (!services)
             return {};
-        return *reinterpret_cast<const cs2::QAngle*>(reinterpret_cast<const std::byte*>(services) + cs2::combat_offsets::kAimPunchUnpredictableAngle);
+
+        // Working CS2 RCS reads the last sample from the aim-punch cache on the services
+        // object (gap before m_unpredictableBaseTick). Base angles alone under-compensate.
+        struct AimPunchCache {
+            int count;
+            int pad;
+            const cs2::QAngle* data;
+        };
+
+        const auto* cache = reinterpret_cast<const AimPunchCache*>(reinterpret_cast<const std::byte*>(services) + cs2::combat_offsets::kAimPunchCache);
+        if (cache->data && cache->count > 0 && cache->count < 128) {
+            const cs2::QAngle& punch = cache->data[cache->count - 1];
+            const float lenSq = punch.pitch * punch.pitch + punch.yaw * punch.yaw;
+            // Reject obviously invalid memory reads (punch is typically small).
+            if (lenSq > 0.000001f && lenSq < 2500.0f)
+                return punch;
+        }
+
+        return *reinterpret_cast<const cs2::QAngle*>(reinterpret_cast<const std::byte*>(services) + cs2::combat_offsets::kAimPunchPredictableAngle);
     }
 
     [[nodiscard]] Optional<bool> isSpotted() const noexcept

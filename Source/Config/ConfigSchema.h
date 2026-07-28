@@ -38,24 +38,56 @@ private:
         configConversion.boolean(u8"TeamCheck", loadVariable<aimbot_vars::TeamCheck>(), saveVariable<aimbot_vars::TeamCheck>());
         configConversion.boolean(u8"VisibilityCheck", loadVariable<aimbot_vars::VisibilityCheck>(), saveVariable<aimbot_vars::VisibilityCheck>());
         configConversion.boolean(u8"RecoilControl", loadVariable<aimbot_vars::RecoilControl>(), saveVariable<aimbot_vars::RecoilControl>());
+        configConversion.boolean(u8"OnlyWhenScoped", loadVariable<aimbot_vars::OnlyWhenScoped>(), saveVariable<aimbot_vars::OnlyWhenScoped>());
+        configConversion.boolean(u8"DisableWhenFlashed", loadVariable<aimbot_vars::DisableWhenFlashed>(), saveVariable<aimbot_vars::DisableWhenFlashed>());
+        configConversion.boolean(u8"RequireHoldKey", loadVariable<aimbot_vars::RequireHoldKey>(), saveVariable<aimbot_vars::RequireHoldKey>());
+        configConversion.boolean(u8"DrawFov", loadVariable<aimbot_vars::DrawFov>(), saveVariable<aimbot_vars::DrawFov>());
         configConversion.uint(u8"Fov", loadVariable<aimbot_vars::Fov>(), saveVariable<aimbot_vars::Fov>());
         configConversion.uint(u8"Smoothness", loadVariable<aimbot_vars::Smoothness>(), saveVariable<aimbot_vars::Smoothness>());
+        configConversion.uint(u8"Hitbox", loadVariable<aimbot_vars::Hitbox>(), saveVariable<aimbot_vars::Hitbox>());
+        configConversion.endObject();
+
+        configConversion.beginObject(u8"NoRecoil");
+        configConversion.boolean(u8"Enabled", loadVariable<no_recoil_vars::Enabled>(), saveVariable<no_recoil_vars::Enabled>());
+        configConversion.uint(u8"Strength", loadVariable<no_recoil_vars::Strength>(), saveVariable<no_recoil_vars::Strength>());
+        configConversion.endObject();
+
+        configConversion.beginObject(u8"NoSpread");
+        configConversion.boolean(u8"Enabled", loadVariable<no_spread_vars::Enabled>(), saveVariable<no_spread_vars::Enabled>());
         configConversion.endObject();
 
         configConversion.beginObject(u8"Triggerbot");
         configConversion.boolean(u8"Enabled", loadVariable<triggerbot_vars::Enabled>(), saveVariable<triggerbot_vars::Enabled>());
         configConversion.boolean(u8"TeamCheck", loadVariable<triggerbot_vars::TeamCheck>(), saveVariable<triggerbot_vars::TeamCheck>());
+        configConversion.boolean(u8"OnlyWhenScoped", loadVariable<triggerbot_vars::OnlyWhenScoped>(), saveVariable<triggerbot_vars::OnlyWhenScoped>());
+        configConversion.boolean(u8"DisableWhenFlashed", loadVariable<triggerbot_vars::DisableWhenFlashed>(), saveVariable<triggerbot_vars::DisableWhenFlashed>());
         configConversion.uint(u8"DelayMs", loadVariable<triggerbot_vars::DelayMs>(), saveVariable<triggerbot_vars::DelayMs>());
         configConversion.endObject();
 
-        configConversion.beginObject(u8"SkinChanger");
-        configConversion.boolean(u8"Enabled", loadVariable<skin_changer_vars::Enabled>(), saveVariable<skin_changer_vars::Enabled>());
-        configConversion.uint(u8"PaintKitAK47", loadVariable<skin_changer_vars::PaintKitAK47>(), saveVariable<skin_changer_vars::PaintKitAK47>());
-        configConversion.uint(u8"PaintKitM4A1S", loadVariable<skin_changer_vars::PaintKitM4A1S>(), saveVariable<skin_changer_vars::PaintKitM4A1S>());
-        configConversion.uint(u8"PaintKitAWP", loadVariable<skin_changer_vars::PaintKitAWP>(), saveVariable<skin_changer_vars::PaintKitAWP>());
-        configConversion.uint(u8"PaintKitDeagle", loadVariable<skin_changer_vars::PaintKitDeagle>(), saveVariable<skin_changer_vars::PaintKitDeagle>());
-        configConversion.uint(u8"PaintKitKnife", loadVariable<skin_changer_vars::PaintKitKnife>(), saveVariable<skin_changer_vars::PaintKitKnife>());
-        configConversion.uint(u8"Wear", loadVariable<skin_changer_vars::Wear>(), saveVariable<skin_changer_vars::Wear>());
+        configConversion.beginObject(u8"BunnyHop");
+        configConversion.boolean(u8"Enabled", loadVariable<bunnyhop_vars::Enabled>(), saveVariable<bunnyhop_vars::Enabled>());
+        configConversion.endObject();
+
+        configConversion.beginObject(u8"AutoStrafe");
+        configConversion.boolean(u8"Enabled", loadVariable<autostrafe_vars::Enabled>(), saveVariable<autostrafe_vars::Enabled>());
+        configConversion.endObject();
+
+        configConversion.beginObject(u8"ThirdPerson");
+        configConversion.boolean(u8"Enabled", loadVariable<thirdperson_vars::Enabled>(), saveVariable<thirdperson_vars::Enabled>());
+        configConversion.uint(u8"Distance", loadVariable<thirdperson_vars::Distance>(), saveVariable<thirdperson_vars::Distance>());
+        configConversion.endObject();
+
+        configConversion.beginObject(u8"InventoryChanger");
+        configConversion.boolean(u8"Enabled", loadVariable<inventory_changer_vars::Enabled>(), saveVariable<inventory_changer_vars::Enabled>());
+        configConversion.uint(u8"AkSkin", loadVariable<inventory_changer_vars::AkSkin>(), saveVariable<inventory_changer_vars::AkSkin>());
+        configConversion.uint(u8"M4Skin", loadVariable<inventory_changer_vars::M4Skin>(), saveVariable<inventory_changer_vars::M4Skin>());
+        configConversion.uint(u8"AwpSkin", loadVariable<inventory_changer_vars::AwpSkin>(), saveVariable<inventory_changer_vars::AwpSkin>());
+        configConversion.uint(u8"DeagleSkin", loadVariable<inventory_changer_vars::DeagleSkin>(), saveVariable<inventory_changer_vars::DeagleSkin>());
+        configConversion.uint(u8"KnifeSkin", loadVariable<inventory_changer_vars::KnifeSkin>(), saveVariable<inventory_changer_vars::KnifeSkin>());
+        configConversion.uint(u8"KnifeType", loadVariable<inventory_changer_vars::KnifeType>(), saveVariable<inventory_changer_vars::KnifeType>());
+        configConversion.uint(u8"Wear", loadVariable<inventory_changer_vars::Wear>(), saveVariable<inventory_changer_vars::Wear>());
+        configConversion.uint(u8"Seed", loadVariable<inventory_changer_vars::Seed>(), saveVariable<inventory_changer_vars::Seed>());
+        configConversion.boolean(u8"StatTrak", loadVariable<inventory_changer_vars::StatTrak>(), saveVariable<inventory_changer_vars::StatTrak>());
         configConversion.endObject();
 
         configConversion.endObject();
@@ -91,6 +123,17 @@ private:
     void visualsObject(auto&& configConversion)
     {
         configConversion.beginObject(u8"Visuals");
+
+        configConversion.beginObject(u8"PlayerEsp");
+        configConversion.boolean(u8"Enabled", loadVariable<player_esp_vars::Enabled>(), saveVariable<player_esp_vars::Enabled>());
+        configConversion.boolean(u8"OnlyEnemies", loadVariable<player_esp_vars::OnlyEnemies>(), saveVariable<player_esp_vars::OnlyEnemies>());
+        configConversion.boolean(u8"ShowBox", loadVariable<player_esp_vars::ShowBox>(), saveVariable<player_esp_vars::ShowBox>());
+        configConversion.boolean(u8"ShowSkeleton", loadVariable<player_esp_vars::ShowSkeleton>(), saveVariable<player_esp_vars::ShowSkeleton>());
+        configConversion.boolean(u8"ShowHeadDot", loadVariable<player_esp_vars::ShowHeadDot>(), saveVariable<player_esp_vars::ShowHeadDot>());
+        configConversion.boolean(u8"ShowHealthBar", loadVariable<player_esp_vars::ShowHealthBar>(), saveVariable<player_esp_vars::ShowHealthBar>());
+        configConversion.boolean(u8"VisibilityCheck", loadVariable<player_esp_vars::VisibilityCheck>(), saveVariable<player_esp_vars::VisibilityCheck>());
+        configConversion.uint(u8"BoxType", loadVariable<player_esp_vars::BoxType>(), saveVariable<player_esp_vars::BoxType>());
+        configConversion.endObject();
 
         configConversion.beginObject(u8"ModelGlow");
         configConversion.boolean(u8"Enabled", loadVariable<model_glow_vars::Enabled>(), saveVariable<model_glow_vars::Enabled>());

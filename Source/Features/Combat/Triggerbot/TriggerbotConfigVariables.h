@@ -8,6 +8,8 @@ namespace triggerbot_vars
 
 CONFIG_VARIABLE(Enabled, bool, false);
 CONFIG_VARIABLE(TeamCheck, bool, true);
+CONFIG_VARIABLE(OnlyWhenScoped, bool, false);
+CONFIG_VARIABLE(DisableWhenFlashed, bool, true);
 CONFIG_VARIABLE_RANGE(DelayMs, triggerbot_params::kDelayMs);
 
 }

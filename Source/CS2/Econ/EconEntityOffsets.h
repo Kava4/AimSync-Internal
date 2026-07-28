@@ -5,19 +5,23 @@
 namespace cs2
 {
 
-// Offsets from cs2-dumper client_dll.hpp — update when the game updates.
+// Offsets from a2x/cs2-dumper client_dll.hpp (C_EconEntity / C_EconItemView).
 namespace econ_offsets
 {
 
-inline constexpr std::ptrdiff_t kAttributeManager = 0x1180;
+inline constexpr std::ptrdiff_t kAttributeManager = 0x11A8;
 inline constexpr std::ptrdiff_t kItem = 0x50;
 
-inline constexpr std::ptrdiff_t kFallbackPaintKit = 0x1658;
-inline constexpr std::ptrdiff_t kFallbackSeed = 0x165C;
-inline constexpr std::ptrdiff_t kFallbackWear = 0x1660;
+inline constexpr std::ptrdiff_t kOriginalOwnerXuidLow = 0x1678;
+inline constexpr std::ptrdiff_t kOriginalOwnerXuidHigh = 0x167C;
+inline constexpr std::ptrdiff_t kFallbackPaintKit = 0x1680;
+inline constexpr std::ptrdiff_t kFallbackSeed = 0x1684;
+inline constexpr std::ptrdiff_t kFallbackWear = 0x1688;
+inline constexpr std::ptrdiff_t kFallbackStatTrak = 0x168C;
 
 inline constexpr std::ptrdiff_t kItemDefinitionIndex = 0x1BA;
 inline constexpr std::ptrdiff_t kEntityQuality = 0x1BC;
+inline constexpr std::ptrdiff_t kItemId = 0x1C8;
 inline constexpr std::ptrdiff_t kItemIdHigh = 0x1D0;
 inline constexpr std::ptrdiff_t kItemIdLow = 0x1D4;
 inline constexpr std::ptrdiff_t kAccountId = 0x1D8;

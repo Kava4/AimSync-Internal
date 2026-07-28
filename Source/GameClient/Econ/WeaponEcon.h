@@ -27,7 +27,7 @@ public:
         return *reinterpret_cast<const std::int32_t*>(reinterpret_cast<const std::byte*>(weapon) + cs2::econ_offsets::kFallbackPaintKit);
     }
 
-    void applySkin(std::int32_t paintKit, float wear, std::uint32_t accountId, std::int32_t seed, bool isKnife) const noexcept
+    void applySkin(std::int32_t paintKit, float wear, std::uint32_t accountId, std::int32_t seed, bool isKnife, std::uint64_t itemId = 0, std::int32_t statTrak = -1) const noexcept
     {
         if (!weapon || paintKit <= 0)
             return;
@@ -42,14 +42,24 @@ public:
         *reinterpret_cast<bool*>(item + cs2::econ_offsets::kItemAttributesDirty) = true;
         *reinterpret_cast<bool*>(item + cs2::econ_offsets::kItemInitialized) = true;
 
-        *reinterpret_cast<std::uint32_t*>(item + cs2::econ_offsets::kItemIdHigh) = 0xFFFFFFFF;
-        *reinterpret_cast<std::uint32_t*>(item + cs2::econ_offsets::kItemIdLow) = 0xFFFFFFFF;
+        if (itemId != 0) {
+            *reinterpret_cast<std::uint64_t*>(item + cs2::econ_offsets::kItemId) = itemId;
+            *reinterpret_cast<std::uint32_t*>(item + cs2::econ_offsets::kItemIdHigh) = static_cast<std::uint32_t>(itemId >> 32);
+            *reinterpret_cast<std::uint32_t*>(item + cs2::econ_offsets::kItemIdLow) = static_cast<std::uint32_t>(itemId);
+        } else {
+            *reinterpret_cast<std::uint32_t*>(item + cs2::econ_offsets::kItemIdHigh) = 0xFFFFFFFF;
+            *reinterpret_cast<std::uint32_t*>(item + cs2::econ_offsets::kItemIdLow) = 0xFFFFFFFF;
+        }
+
         *reinterpret_cast<std::uint32_t*>(item + cs2::econ_offsets::kAccountId) = accountId;
+        *reinterpret_cast<std::uint32_t*>(weaponBytes + cs2::econ_offsets::kOriginalOwnerXuidLow) = accountId;
+        *reinterpret_cast<std::uint32_t*>(weaponBytes + cs2::econ_offsets::kOriginalOwnerXuidHigh) = 0;
 
         *reinterpret_cast<std::int32_t*>(weaponBytes + cs2::econ_offsets::kFallbackPaintKit) = paintKit;
         *reinterpret_cast<float*>(weaponBytes + cs2::econ_offsets::kFallbackWear) = wear;
         *reinterpret_cast<std::int32_t*>(weaponBytes + cs2::econ_offsets::kFallbackSeed) = seed;
-        *reinterpret_cast<std::int32_t*>(item + cs2::econ_offsets::kEntityQuality) = isKnife ? 4 : 0;
+        *reinterpret_cast<std::int32_t*>(weaponBytes + cs2::econ_offsets::kFallbackStatTrak) = statTrak;
+        *reinterpret_cast<std::int32_t*>(item + cs2::econ_offsets::kEntityQuality) = isKnife ? 3 : 0;
     }
 
 private:

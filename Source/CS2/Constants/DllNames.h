@@ -13,5 +13,6 @@ constexpr auto SCENESYSTEM_DLL = WIN64_LINUX("scenesystem.dll", "libscenesystem.
 constexpr auto SDL_DLL = WIN64_LINUX("SDL3.dll", "libSDL3.so.0");
 constexpr auto SOUNDSYSTEM_DLL = WIN64_LINUX("soundsystem.dll", "libsoundsystem.so");
 constexpr auto TIER0_DLL = WIN64_LINUX("tier0.dll", "libtier0.so");
+constexpr auto GAMEOVERLAYRENDERER_DLL = WIN64_LINUX("gameoverlayrenderer64.dll", "gameoverlayrenderer64.dll");
 
 }

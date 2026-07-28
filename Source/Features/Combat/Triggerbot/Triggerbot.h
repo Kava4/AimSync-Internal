@@ -17,16 +17,11 @@ public:
 
     void update() noexcept
     {
-        if (!enabled()) {
-            resetState();
-            attackInput().clear();
+        if (!enabled())
             return;
-        }
 
         if (!isValidTarget()) {
-            resetState();
-            attackInput().clear();
-            releaseAttack();
+            stopForcedAttack();
             return;
         }
 
@@ -42,18 +37,18 @@ public:
 
         if (curtime.value() >= triggerState.fireTime) {
             attackInput().press();
+            triggerState.forcedAttack = true;
             triggerState.justFired = true;
             triggerState.waitingToFire = false;
             triggerState.holdFramesLeft = 4;
         }
 
-        releaseAttack();
+        finishForcedAttackHold();
     }
 
     void onDisable() noexcept
     {
-        resetState();
-        attackInput().clear();
+        stopForcedAttack();
     }
 
 private:
@@ -68,8 +63,14 @@ private:
         if (!localPlayerPawn || !localPlayerPawn.isAlive().value_or(false))
             return false;
 
+        if (GET_CONFIG_VAR(triggerbot_vars::DisableWhenFlashed) && localPlayerPawn.isFlashed())
+            return false;
+
+        if (GET_CONFIG_VAR(triggerbot_vars::OnlyWhenScoped) && !localPlayerPawn.isScoped().valueOr(false))
+            return false;
+
         const auto crosshairEntityIndex = localPlayerPawn.crosshairEntityIndex();
-        if (!crosshairEntityIndex.has_value() || crosshairEntityIndex->value <= 0)
+        if (!crosshairEntityIndex.has_value() || !crosshairEntityIndex->isValid() || crosshairEntityIndex->value == 0)
             return false;
 
         auto* targetEntity = hookContext.template make<EntitySystem>().getEntityFromIndex(*crosshairEntityIndex);
@@ -95,9 +96,12 @@ private:
         return true;
     }
 
-    void releaseAttack() noexcept
+    void finishForcedAttackHold() noexcept
     {
         auto& triggerState = state();
+        if (!triggerState.forcedAttack)
+            return;
+
         if (triggerState.justFired && triggerState.holdFramesLeft > 0) {
             attackInput().press();
             --triggerState.holdFramesLeft;
@@ -107,12 +111,16 @@ private:
         if (triggerState.justFired) {
             attackInput().release();
             triggerState.justFired = false;
+            triggerState.forcedAttack = false;
         }
     }
 
-    void resetState() noexcept
+    void stopForcedAttack() noexcept
     {
-        state() = {};
+        auto& triggerState = state();
+        if (triggerState.forcedAttack)
+            attackInput().release();
+        triggerState = {};
     }
 
     [[nodiscard]] auto& state() const noexcept

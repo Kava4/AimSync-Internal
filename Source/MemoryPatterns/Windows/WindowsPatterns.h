@@ -43,3 +43,4 @@
 #include "WeaponPatternsWindows.h"
 #include "WeaponServicesPatternsWindows.h"
 #include "WeaponVDataPatternsWindows.h"
+#include "InventoryPatternsWindows.h"

@@ -21,6 +21,8 @@ struct ViewAngles {
     }
 
 private:
+    // dwViewAngles is a standalone client.dll global (QAngle*), not a field inside CCSGOInput.
+    // Writing into CCSGOInput+delta corrupts input/button state and breaks spray.
     [[nodiscard]] cs2::QAngle* getAngles() const noexcept
     {
         const auto clientBase = getClientDllBase();

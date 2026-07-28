@@ -2,17 +2,31 @@
 
 #include "GlobalContext/GlobalContext.h"
 #include "Hooks/PeepEventsHook.h"
+#include "UI/Dx11/Dx11Menu.h"
 #include "Utils/ReturnAddress.h"
+
+void aimSyncSetModuleHandle(void* module) noexcept;
+void aimSyncFreeLibrary() noexcept;
 
 [[NOINLINE]] void finishInit(auto& hookContext)
 {
     hookContext.entityClassifier().init(hookContext);
-    if (const auto mainMenu{hookContext.patternSearchResults().template get<MainMenuPanelPointer>()}; mainMenu && *mainMenu)
-        hookContext.template make<PanoramaGUI>().init(hookContext.template make<PanoramaUiPanel>((*mainMenu)->uiPanel));
     hookContext.config().init();
     hookContext.config().scheduleLoad();
     hookContext.hooks().peepEventsHook.disable();
     hookContext.hooks().viewRenderHook.install();
+}
+
+[[NOINLINE]] void ensurePanoramaGui(auto& hookContext) noexcept
+{
+    static bool panoramaInitialized = false;
+    if (panoramaInitialized || !shouldUsePanoramaMenu())
+        return;
+
+    if (const auto mainMenu{hookContext.patternSearchResults().template get<MainMenuPanelPointer>()}; mainMenu && *mainMenu) {
+        hookContext.template make<PanoramaGUI>().init(hookContext.template make<PanoramaUiPanel>((*mainMenu)->uiPanel));
+        panoramaInitialized = true;
+    }
 }
 
 int SDLHook_PeepEvents(void* events, int numevents, int action, unsigned minType, unsigned maxType) noexcept
@@ -31,6 +45,7 @@ int SDLHook_PeepEvents(void* events, int numevents, int action, unsigned minType
 
 [[NOINLINE]] void unload(auto& hookContext) noexcept
 {
+    dx11MenuOnUnload();
     hookContext.template make<BombTimer>().onUnload();
     hookContext.template make<DefusingAlert>().onUnload();
     hookContext.template make<PostRoundTimer>().onUnload();
@@ -44,6 +59,7 @@ int SDLHook_PeepEvents(void* events, int numevents, int action, unsigned minType
     hookContext.template make<WeaponModelGlowPreview>().onUnload();
     hookContext.template make<NoScopeInaccuracyVis>().onUnload();
     hookContext.template make<Triggerbot>().onDisable();
+    hookContext.template make<ThirdPerson>().onDisable();
     hookContext.template make<BombPlantAlert>().onUnload();
 
     hookContext.template make<EntitySystem>().forEachNetworkableEntityIdentity([&hookContext](const auto& entityIdentity) {
@@ -62,6 +78,8 @@ int SDLHook_PeepEvents(void* events, int numevents, int action, unsigned minType
         else if (entityTypeInfo.isWeapon())
             hookContext.template make<ModelGlow>().onUnload()(WeaponModelGlow{hookContext}, baseEntity.template as<BaseWeapon>());
     });
+
+    aimSyncFreeLibrary();
 }
 
 void ViewRenderHook_onRenderStart(cs2::CViewRender* thisptr) noexcept
@@ -74,9 +92,14 @@ void ViewRenderHook_onRenderStart(cs2::CViewRender* thisptr) noexcept
     SoundFeatures{hookContext.soundWatcherState(), hookContext.hooks().viewRenderHook, hookContext}.runOnViewMatrixUpdate();
 
     hookContext.make<NoScopeInaccuracyVis>().update();
+    hookContext.template make<NoRecoil>().update();
+    hookContext.template make<NoSpread>().update();
+    // InventoryChanger paused (crash-prone) — do not call update().
+    hookContext.template make<BunnyHop>().update();
+    hookContext.template make<AutoStrafe>().update();
+    hookContext.template make<ThirdPerson>().update();
     hookContext.template make<Aimbot>().update();
     hookContext.template make<Triggerbot>().update();
-    // hookContext.template make<SkinChanger>().update(); // WIP — skin changer tab disabled
     hookContext.make<RenderingHookEntityLoop>().run();
     hookContext.make<GlowSceneObjects>().removeUnreferencedObjects();
     hookContext.make<DefusingAlert>().run();
@@ -84,8 +107,14 @@ void ViewRenderHook_onRenderStart(cs2::CViewRender* thisptr) noexcept
     hookContext.make<BombStatusPanelManager>().run();
     hookContext.make<InWorldPanels>().hideUnusedPanels();
 
+    dx11MenuTryDeferredInstall();
+    ensurePanoramaGui(hookContext);
+
     UnloadFlag unloadFlag;
-    hookContext.make<PanoramaGUI>().run(unloadFlag);
+    if (shouldUsePanoramaMenu())
+        hookContext.make<PanoramaGUI>().run(unloadFlag);
+    if (dx11MenuConsumeUnloadRequest())
+        unloadFlag.set();
     hookContext.config().update();
     hookContext.config().performFileOperation();
 

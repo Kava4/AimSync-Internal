@@ -8,6 +8,9 @@ constinit ManuallyDestructible<GlobalContext> GlobalContext::globalContext;
 
 #include "EntryPoints/EntryPoints.h"
 
+void aimSyncSetModuleHandle(void* module) noexcept;
+void aimSyncFreeLibrary() noexcept;
+
 #if IS_WIN64()
 #include "BuildConfig.h"
 #include "MemoryPatterns/Windows/WindowsPatterns.h"
@@ -20,10 +23,12 @@ void operator delete(void*, std::size_t) noexcept
     // for 'placement new' to work
 }
 
-extern "C" std::size_t DllMain(HMODULE, DWORD reason, LPVOID) noexcept
+extern "C" std::size_t DllMain(HMODULE module, DWORD reason, LPVOID) noexcept
 {
-    if (reason == DLL_PROCESS_ATTACH)
+    if (reason == DLL_PROCESS_ATTACH) {
+        aimSyncSetModuleHandle(module);
         GlobalContext::initializeInstance();
+    }
     return TRUE;
 }
 

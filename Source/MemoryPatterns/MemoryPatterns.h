@@ -32,7 +32,7 @@ struct MemoryPatterns {
 
 constexpr auto kClientPatterns = []() consteval {
 #define ADD_PATTERNS(patterns) addPatterns([](auto patternPool) consteval { return patterns::addClientPatterns(patternPool); })
-    constexpr auto builder = PatternPoolBuilder<TempPatternPool<4000, 155>>{}
+    constexpr auto builder = PatternPoolBuilder<TempPatternPool<5000, 180>>{}
         .ADD_PATTERNS(BaseModelEntityPatterns)
         .ADD_PATTERNS(C4Patterns)
         .ADD_PATTERNS(ClientPatterns)
@@ -48,6 +48,7 @@ constexpr auto kClientPatterns = []() consteval {
         .ADD_PATTERNS(HostageServicesPatterns)
         .ADD_PATTERNS(GlowPropertyPatterns)
         .ADD_PATTERNS(GlowSceneObjectPatterns)
+        .ADD_PATTERNS(InventoryPatterns)
         .ADD_PATTERNS(MemAllocPatterns)
         .ADD_PATTERNS(PanelPatterns)
         .ADD_PATTERNS(PanoramaDropDownPatterns)

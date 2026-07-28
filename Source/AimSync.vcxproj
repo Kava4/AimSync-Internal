@@ -95,7 +95,11 @@
     <ClInclude Include="CS2\Constants\StylePropertySymbolNames.h" />
     <ClInclude Include="CS2\Constants\StylePropertyTypeNames.h" />
     <ClInclude Include="CS2\Constants\TeamNumberConstants.h" />
+    <ClInclude Include="CS2\Econ\CEconItem.h" />
+    <ClInclude Include="CS2\Econ\CEconItemDefinition.h" />
+    <ClInclude Include="CS2\Econ\EconContainers.h" />
     <ClInclude Include="CS2\Econ\EconEntityOffsets.h" />
+    <ClInclude Include="CS2\Econ\InventoryOffsets.h" />
     <ClInclude Include="CS2\Econ\ItemDefinitionIndex.h" />
     <ClInclude Include="CS2\Econ\ItemId.h" />
     <ClInclude Include="CS2\Econ\PaintKitIndex.h" />
@@ -126,16 +130,45 @@
     <ClInclude Include="Features\Combat\Aimbot\Aimbot.h" />
     <ClInclude Include="Features\Combat\Aimbot\AimbotConfigVariables.h" />
     <ClInclude Include="Features\Combat\Aimbot\AimbotParams.h" />
+    <ClInclude Include="CS2\Bones\BoneIds.h" />
+    <ClInclude Include="Features\Visuals\PlayerEsp\PlayerEsp.h" />
+    <ClInclude Include="Features\Visuals\PlayerEsp\PlayerEspConfigVariables.h" />
+    <ClInclude Include="Features\Visuals\PlayerEsp\PlayerEspParams.h" />
+    <ClInclude Include="GameClient\Entities\PlayerBones.h" />
+    <ClInclude Include="GameClient\WorldToScreen\WorldToScreen.h" />
+    <ClInclude Include="UI\Dx11\AimSyncGui.h" />
+    <ClInclude Include="Features\Combat\NoRecoil\NoRecoil.h" />
+    <ClInclude Include="Features\Combat\NoRecoil\NoRecoilConfigVariables.h" />
+    <ClInclude Include="Features\Combat\NoRecoil\NoRecoilParams.h" />
+    <ClInclude Include="Features\Combat\NoRecoil\NoRecoilState.h" />
+    <ClInclude Include="Features\Misc\BunnyHop\BunnyHop.h" />
+    <ClInclude Include="Features\Misc\BunnyHop\BunnyHopConfigVariables.h" />
+    <ClInclude Include="Features\Misc\AutoStrafe\AutoStrafe.h" />
+    <ClInclude Include="Features\Misc\AutoStrafe\AutoStrafeConfigVariables.h" />
+    <ClInclude Include="Features\Misc\ThirdPerson\ThirdPerson.h" />
+    <ClInclude Include="Features\Misc\ThirdPerson\ThirdPersonConfigVariables.h" />
+    <ClInclude Include="Features\Misc\ThirdPerson\ThirdPersonParams.h" />
+    <ClInclude Include="CS2\Classes\CCSGOInput.h" />
+    <ClInclude Include="Platform\GameButtons.h" />
+    <ClInclude Include="Platform\Windows\WindowsGameButtons.h" />
     <ClInclude Include="Features\Combat\Triggerbot\Triggerbot.h" />
     <ClInclude Include="Features\Combat\Triggerbot\TriggerbotConfigVariables.h" />
     <ClInclude Include="Features\Combat\Triggerbot\TriggerbotParams.h" />
     <ClInclude Include="Features\Combat\Triggerbot\TriggerbotState.h" />
     <ClInclude Include="Features\Combat\SniperRifles\NoScopeInaccuracyVis\NoScopeInaccuracyVisState.h" />
+    <ClInclude Include="Features\Inventory\InventoryChanger\InventoryChanger.h" />
+    <ClInclude Include="Features\Inventory\InventoryChanger\InventoryChangerConfigVariables.h" />
+    <ClInclude Include="Features\Inventory\InventoryChanger\InventoryChangerParams.h" />
+    <ClInclude Include="Features\Inventory\InventoryChanger\InventoryChangerState.h" />
+    <ClInclude Include="Features\Inventory\InventoryChanger\InventoryItemsManager.h" />
     <ClInclude Include="Features\Inventory\SkinChanger\SkinChanger.h" />
     <ClInclude Include="Features\Inventory\SkinChanger\SkinChangerConfigVariables.h" />
     <ClInclude Include="Features\Inventory\SkinChanger\SkinChangerParams.h" />
     <ClInclude Include="Features\Inventory\SkinChanger\SkinChangerState.h" />
     <ClInclude Include="GameClient\Econ\WeaponEcon.h" />
+    <ClInclude Include="GameClient\Inventory\EconItemSchema.h" />
+    <ClInclude Include="GameClient\Inventory\InventoryManager.h" />
+    <ClInclude Include="Utils\VirtualCall.h" />
     <ClInclude Include="Features\Common\FeatureToggle.h" />
     <ClInclude Include="Features\Common\InWorldPanelIndex.h" />
     <ClInclude Include="Features\Common\InWorldPanelListEntry.h" />
@@ -374,6 +407,7 @@
     <ClInclude Include="HookContext\HookContext.h" />
     <ClInclude Include="HookContext\HookContextMacros.h" />
     <ClInclude Include="Hooks\ClientModeHooks.h" />
+    <ClInclude Include="Hooks\Detour\DetourHookLoader.h" />
     <ClInclude Include="Hooks\Hooks.h" />
     <ClInclude Include="Hooks\PeepEventsHook.h" />
     <ClInclude Include="Hooks\ViewRenderHook.h" />
@@ -401,6 +435,7 @@
     <ClInclude Include="MemoryPatterns\PatternTypes\GlowPropertyPatternTypes.h" />
     <ClInclude Include="MemoryPatterns\PatternTypes\GlowSceneObjectPatternTypes.h" />
     <ClInclude Include="MemoryPatterns\PatternTypes\HostageServicesPatternTypes.h" />
+    <ClInclude Include="MemoryPatterns\PatternTypes\InventoryPatternTypes.h" />
     <ClInclude Include="MemoryPatterns\PatternTypes\MemAllocPatternTypes.h" />
     <ClInclude Include="MemoryPatterns\PatternTypes\PanelPatternTypes.h" />
     <ClInclude Include="MemoryPatterns\PatternTypes\PanelStylePatternTypes.h" />
@@ -442,6 +477,7 @@
     <ClInclude Include="MemoryPatterns\Windows\GlowPropertyPatternsWindows.h" />
     <ClInclude Include="MemoryPatterns\Windows\GlowSceneObjectPatternsWindows.h" />
     <ClInclude Include="MemoryPatterns\Windows\HostageServicesPatternsWindows.h" />
+    <ClInclude Include="MemoryPatterns\Windows\InventoryPatternsWindows.h" />
     <ClInclude Include="MemoryPatterns\Windows\PlayerResourcePatternsWindows.h" />
     <ClInclude Include="MemoryPatterns\Windows\PortraitWorldPatternsWindows.h" />
     <ClInclude Include="MemoryPatterns\Windows\MemAllocPatternsWindows.h" />
@@ -503,6 +539,7 @@
     <ClInclude Include="MemorySearch\PatternSearchResults.h" />
     <ClInclude Include="MemorySearch\PatternSearchResultsView.h" />
     <ClInclude Include="MemorySearch\PatternStringWildcard.h" />
+    <ClInclude Include="MemorySearch\RuntimePatternSearch.h" />
     <ClInclude Include="MemorySearch\BytePatternView.h" />
     <ClInclude Include="MemorySearch\TempPatternPool.h" />
     <ClInclude Include="OutlineGlow\GlowSceneObject.h" />
@@ -551,6 +588,7 @@
     <ClInclude Include="SDL\SdlConstants.h" />
     <ClInclude Include="SDL\SdlDll.h" />
     <ClInclude Include="SDL\SdlFunctions.h" />
+    <ClInclude Include="UI\Dx11\Dx11Menu.h" />
     <ClInclude Include="UI\Panorama\CombatTab.h" />
     <ClInclude Include="UI\Panorama\HudTab.h" />
     <ClInclude Include="UI\Panorama\OnOffDropdownSelectionChangeHandler.h" />
@@ -625,7 +663,18 @@
     <ClCompile Include="dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="EntryPoints\AimSyncUnload.cpp" />
+    <ClCompile Include="Features\Inventory\InventoryChanger\SafeUpdateSkin.cpp" />
+    <ClCompile Include="Hooks\Detour\DetourHookLoader.cpp" />
     <ClCompile Include="Platform\Windows\CRTWindows.cpp" />
+    <ClCompile Include="UI\Dx11\Dx11Menu.cpp" />
+    <ClCompile Include="UI\Dx11\AimSyncMenuTextures.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="ThirdParty\ImGui\imgui_impl_win32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="Platform\Windows\Syscalls\WindowsSyscall.asm" />
@@ -641,17 +690,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(MSBuildThisFileDirectory)..\x64\$(Configuration)\</OutDir>
+    <IntDir>$(MSBuildThisFileDirectory)obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ImportGroup Label="ExtensionSettings">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
   </ImportGroup>
@@ -713,6 +766,7 @@
       <EnableUAC>false</EnableUAC>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <EntryPointSymbol>DllMain</EntryPointSymbol>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;imm32.lib;dwmapi.lib;libcmt.lib;libvcruntime.lib;libucrt.lib;legacy_stdio_definitions.lib;$(ProjectDir)ThirdParty\MinHook\libMinHook.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

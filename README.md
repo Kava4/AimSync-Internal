@@ -1,123 +1,136 @@
-# AimSync Internal CS2
+# AimSync Internal
 
-[![Windows](https://github.com/Kava-4/AimSync-Internal/actions/workflows/windows.yml/badge.svg)](https://github.com/Kava-4/AimSync-Internal/actions/workflows/windows.yml)
-[![Linux](https://github.com/Kava-4/AimSync-Internal/actions/workflows/linux.yml/badge.svg)](https://github.com/Kava-4/AimSync-Internal/actions/workflows/linux.yml)
+[![Windows](https://github.com/Kava4/AimSync-Internal/actions/workflows/windows.yml/badge.svg)](https://github.com/Kava4/AimSync-Internal/actions/workflows/windows.yml)
 
-Open-source internal cheat for **Counter-Strike 2**. Native Panorama menu in the main lobby — no external overlay, no ImGui.
+**AimSync Internal** is a Counter-Strike 2 internal cheat for Windows (x64), with a DX11 / ImGui overlay menu and an auto-injecting loader.
 
-> **Internal · CS2** — pattern-scanned hooks, game-native UI, config auto-save.
+> Part of the [AimSync](https://github.com/Kava4/AimSync) ecosystem by [Kava4](https://github.com/Kava4).
 
 ---
 
-## Features
+## Status
 
-### Aim
-| Tab | Description |
-|-----|-------------|
-| **Snipers** | No-scope inaccuracy visualization |
-| **Aimbot** | FOV, smoothness, team check, visibility check, RCS |
-| **Trigger** | Crosshair trigger with delay and team check |
-| **Skins** | *Work in progress* |
+| Area | State |
+|------|--------|
+| DX11 overlay menu (INSERT / PAUSE) | Working |
+| Auto loader (`AimSync.exe`) | Working |
+| Aimbot / Triggerbot / No Recoil / No Spread | Working |
+| Box / Skeleton ESP | Working |
+| Model / Outline glow, player info, HUD helpers | Working |
+| Bunny hop / Auto strafe / Third person | Working |
+| Sound ESP | Working |
+| Inventory / skin changer | **Paused (WIP)** — buy-menu path was unstable |
+| Overlay icon textures / custom font polish | **TODO** |
+| Linux build / inject | **Legacy / untested** with current overlay path |
 
-### Overlay
-Bomb timer, defuse countdown, plant alert, killfeed preservation, post-round timer.
+---
 
-### ESP
-| Tab | Description |
-|-----|-------------|
-| **Player ESP** | Health, weapon, ammo, position arrows, bomb/hostage/defuse icons |
-| **Outlines** | Player, weapon, grenade, bomb, defuse kit, hostage glow |
-| **Models** | Full model glow with live preview |
-| **Viewmodel** | FOV modification with preview |
+## Working features
 
-### Audio
-Footstep, bomb plant/beep/defuse, scope and reload sound visualization.
+### Combat
+- **Aimbot** — FOV, smooth, team/visibility checks, recoil control, hold-LMB, draw FOV, hitbox select (head / neck / chest / pelvis / nearest)
+- **Triggerbot** — delay, team check, scope-only, flash ignore
+- **No Recoil** — strength slider
+- **No Spread**
+- **No-scope inaccuracy visualization**
+
+### Visuals
+- **Player ESP** — box (full / corner), skeleton, head circle, health bar, enemies-only, visibility check
+- **Model glow** / **Outline glow** (players, weapons, bombs, projectiles, etc.)
+- **Player info in world** — name, health, weapon, ammo, arrows, state icons
+- **Grenade prediction**
+- **Viewmodel FOV mod**
+
+### Misc / HUD / Audio
+- Bomb timer, defusing alert, plant alert, killfeed preserver, post-round timer
+- Bunny hop, auto strafe, third person
+- Sound ESP — footsteps, bomb plant/beep/defuse, scope, reload
+
+### Loader
+- `AimSync.exe` waits for `cs2.exe` and manual-maps the embedded `AimSync.dll` (run as Administrator)
+
+---
+
+## TODO / WIP
+
+- [ ] Re-enable **inventory / skin changer** with a safer apply pipeline (currently stubbed; crashes on in-game apply)
+- [ ] Optional sidebar **icon textures** (safe deferred load)
+- [ ] Higher-quality **font** without Present-thread file loads that previously crashed
+- [ ] Config UI page (save/load slots) beyond autosave `default.cfg`
+- [ ] Verify / refresh **offsets & patterns** after each CS2 update ([cs2-dumper](https://github.com/a2x/cs2-dumper))
+- [ ] Revisit Linux support for the DX11-era feature set
 
 ---
 
 ## Menu
 
-Open the main menu in CS2 lobby. Click the **sniper spotted** icon in the top navbar.
+1. Inject with the loader (or map `AimSync.dll` yourself).
+2. Press **INSERT** or **PAUSE** to toggle the overlay.
+3. Tabs: **Aim** · **Vis** · **Misc** · **Cfg**
 
-Settings save automatically to `default.cfg`.
+Settings autosave to config (see below).
 
 ---
 
 ## Build
 
-### Windows
+### Requirements
+- Visual Studio 2022+ — Desktop development with C++
+- Windows x64, Release
 
-**Requirements:** Visual Studio 2022 — Desktop development with C++
+### Commands
 
 ```powershell
-msbuild AimSync.sln /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v145
+msbuild Source\AimSync.vcxproj /p:Configuration=Release /p:Platform=x64
+msbuild Loader\AimSyncLoader.vcxproj /p:Configuration=Release /p:Platform=x64
 ```
 
-Output: `x64\Release\AimSync.dll`
+| Output | Path |
+|--------|------|
+| Cheat DLL | `x64\Release\AimSync.dll` |
+| Auto loader | `x64\Release\AimSync.exe` (embeds the DLL as a resource) |
 
-### Linux
-
-**Requirements:** CMake 3.24+, g++ 11+ or clang++ 18+
-
-```bash
-cmake -DCMAKE_BUILD_TYPE=Release -B build
-cmake --build build -j $(nproc --all)
-```
-
-Output: `build/Source/libAimSync.so`
+Rebuild the **loader after the DLL** so the embedded payload stays current.
 
 ---
 
 ## Inject
 
-### Windows
+1. Start CS2.
+2. Run `x64\Release\AimSync.exe` **as Administrator**.
+3. Wait for `Injected successfully.`
+4. Press **INSERT** in-game / menu.
 
-Use a **manual mapping** (reflective) injector. Standard `LoadLibrary` injection is blocked by CS2.
-
-> Xenos and Extreme Injector are known to be flagged by VAC.
-
-### Linux
-
-```bash
-sudo gdb -batch-silent -p $(pidof cs2) -ex "call (void*)dlopen(\"$PWD/libAimSync.so\", 2)"
-```
-
-> gdb is visible under `TracerPid` during injection — may be detected.
+> Prefer the bundled loader (manual map). Generic LoadLibrary injectors are often blocked or risky.
 
 ---
 
-## Config
+## Config path
 
 | Platform | Path |
 |----------|------|
 | Windows | `%appdata%\AimSyncCS2\configs\default.cfg` |
-| Linux | `$HOME/AimSyncCS2/configs/default.cfg` |
 
 ---
 
-## Technical
+## Project layout
 
-Release builds are designed for minimal footprint:
-
-- No CRT in release builds
-- No heap allocations
-- No static imports (Windows release)
-- No threads
-- No exceptions
-- No external dependencies
-
-Offsets are sourced from [cs2-dumper](https://github.com/a2x/cs2-dumper) and must be updated after game patches.
+```
+AimSync-Internal/
+├── Loader/          # Auto injector (manual map + embedded DLL)
+├── Source/          # Cheat sources (features, hooks, DX11 UI)
+├── Tests/
+└── AimSync.sln
+```
 
 ---
 
 ## Disclaimer
 
-For educational purposes only. Use at your own risk. The authors are not responsible for any bans or account restrictions.
+For educational / research purposes only. Use at your own risk. You are responsible for compliance with game ToS and any account actions (including bans).
 
 ---
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
-Based on [Osiris](https://github.com/danielkrupinski/Osiris) by Daniel Krupiński.

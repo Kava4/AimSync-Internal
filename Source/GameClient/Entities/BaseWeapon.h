@@ -5,6 +5,7 @@
 #include <CS2/Classes/Entities/C_CSWeaponBase.h>
 #include <CS2/Classes/Entities/WeaponEntities.h>
 #include <CS2/Classes/CCSWeaponBaseVData.h>
+#include <CS2/Combat/CombatOffsets.h>
 #include <MemoryPatterns/PatternTypes/WeaponPatternTypes.h>
 #include <MemoryPatterns/PatternTypes/WeaponVDataPatternTypes.h>
 #include <Features/Visuals/GrenadePrediction/GrenadeKind.h>
@@ -82,9 +83,33 @@ public:
         return {};
     }
 
+    [[nodiscard]] bool isRecoilCompensatable() const noexcept
+    {
+        if (!baseWeapon)
+            return false;
+
+        const auto typeIndex = baseEntity().classify().typeIndex;
+        if (typeIndex == EntityTypeInfo::indexOf<cs2::C_Knife>()
+            || typeIndex == EntityTypeInfo::indexOf<cs2::C_WeaponTaser>()
+            || typeIndex == EntityTypeInfo::indexOf<cs2::C_C4>())
+            return false;
+
+        return !grenadeKind().hasValue();
+    }
+
     [[nodiscard]] auto clipAmmo() const noexcept
     {
         return hookContext.patternSearchResults().template get<OffsetToClipAmmo>().of(baseWeapon).toOptional();
+    }
+
+    void clearAccuracyPenalty() const noexcept
+    {
+        if (!baseWeapon)
+            return;
+        auto* bytes = reinterpret_cast<std::byte*>(baseWeapon);
+        *reinterpret_cast<float*>(bytes + cs2::combat_offsets::kWeaponTurningInaccuracy) = 0.0f;
+        *reinterpret_cast<float*>(bytes + cs2::combat_offsets::kWeaponAccuracyPenalty) = 0.0f;
+        *reinterpret_cast<float*>(bytes + cs2::combat_offsets::kWeaponAccuracySmoothedForZoom) = 0.0f;
     }
 
     [[nodiscard]] auto getSceneObjectUpdater() const noexcept

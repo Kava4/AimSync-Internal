@@ -4,7 +4,7 @@
 
 #include <Features/Combat/SniperRifles/NoScopeInaccuracyVis/NoScopeInaccuracyVis.h>
 #include <Features/Combat/Triggerbot/Triggerbot.h>
-#include <Features/Inventory/SkinChanger/SkinChangerConfigVariables.h>
+#include <Features/Inventory/InventoryChanger/InventoryChangerConfigVariables.h>
 #include <Features/Hud/BombPlantAlert/BombPlantAlert.h>
 #include <Features/Hud/BombTimer/BombTimer.h>
 #include <Features/Hud/DefusingAlert/DefusingAlert.h>
@@ -217,39 +217,66 @@ private:
             hookContext.template make<Triggerbot>().onDisable();
     }
 
-    ON_CHANGE(skin_changer_vars::Enabled)
+    ON_CHANGE(inventory_changer_vars::Enabled)
     {
-        hookContext.featuresStates().skinChangerState.forceFullUpdate = true;
+        if (newValue == false) {
+            hookContext.featuresStates().inventoryChangerState.seeded = false;
+            hookContext.featuresStates().inventoryChangerState.addedItems.clear();
+        }
     }
 
-    ON_CHANGE(skin_changer_vars::PaintKitAK47)
+    ON_CHANGE(inventory_changer_vars::AkSkin)
     {
-        hookContext.featuresStates().skinChangerState.forceFullUpdate = true;
+        (void)newValue;
+        hookContext.featuresStates().inventoryChangerState.seeded = false;
     }
 
-    ON_CHANGE(skin_changer_vars::PaintKitM4A1S)
+    ON_CHANGE(inventory_changer_vars::M4Skin)
     {
-        hookContext.featuresStates().skinChangerState.forceFullUpdate = true;
+        (void)newValue;
+        hookContext.featuresStates().inventoryChangerState.seeded = false;
     }
 
-    ON_CHANGE(skin_changer_vars::PaintKitAWP)
+    ON_CHANGE(inventory_changer_vars::AwpSkin)
     {
-        hookContext.featuresStates().skinChangerState.forceFullUpdate = true;
+        (void)newValue;
+        hookContext.featuresStates().inventoryChangerState.seeded = false;
     }
 
-    ON_CHANGE(skin_changer_vars::PaintKitDeagle)
+    ON_CHANGE(inventory_changer_vars::DeagleSkin)
     {
-        hookContext.featuresStates().skinChangerState.forceFullUpdate = true;
+        (void)newValue;
+        hookContext.featuresStates().inventoryChangerState.seeded = false;
     }
 
-    ON_CHANGE(skin_changer_vars::PaintKitKnife)
+    ON_CHANGE(inventory_changer_vars::KnifeSkin)
     {
-        hookContext.featuresStates().skinChangerState.forceFullUpdate = true;
+        (void)newValue;
+        hookContext.featuresStates().inventoryChangerState.seeded = false;
     }
 
-    ON_CHANGE(skin_changer_vars::Wear)
+    ON_CHANGE(inventory_changer_vars::KnifeType)
     {
-        hookContext.featuresStates().skinChangerState.forceFullUpdate = true;
+        (void)newValue;
+        hookContext.featuresStates().inventoryChangerState.seeded = false;
+    }
+
+    ON_CHANGE(inventory_changer_vars::Wear)
+    {
+        (void)newValue;
+        hookContext.featuresStates().inventoryChangerState.seeded = false;
+    }
+
+    ON_CHANGE(inventory_changer_vars::Seed)
+    {
+        (void)newValue;
+        hookContext.featuresStates().inventoryChangerState.seeded = false;
+    }
+
+    ON_CHANGE(inventory_changer_vars::StatTrak)
+    {
+        (void)newValue;
+        hookContext.featuresStates().inventoryChangerState.seeded = false;
     }
 
     ON_CHANGE(BombPlantAlertEnabled)
