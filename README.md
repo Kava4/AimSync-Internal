@@ -21,7 +21,6 @@
 | Sound ESP | Working |
 | Inventory / skin changer | **Paused (WIP)** — buy-menu path was unstable |
 | Overlay icon textures / custom font polish | **TODO** |
-| Linux build / inject | **Legacy / untested** with current overlay path |
 
 ---
 
@@ -58,7 +57,6 @@
 - [ ] Higher-quality **font** without Present-thread file loads that previously crashed
 - [ ] Config UI page (save/load slots) beyond autosave `default.cfg`
 - [ ] Verify / refresh **offsets & patterns** after each CS2 update ([cs2-dumper](https://github.com/a2x/cs2-dumper))
-- [ ] Revisit Linux support for the DX11-era feature set
 
 ---
 

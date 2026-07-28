@@ -115,14 +115,3 @@ const void* memchr(const void* ptr, int ch, std::size_t count)
 {
     return crt::memchr(reinterpret_cast<const unsigned char*>(ptr), static_cast<unsigned char>(ch), count);
 }
-
-#pragma function(wcslen)
-std::size_t wcslen(const wchar_t* str)
-{
-    std::size_t length = 0;
-    while (str && *str) {
-        ++length;
-        ++str;
-    }
-    return length;
-}

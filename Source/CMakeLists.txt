@@ -22,6 +22,8 @@ if(MSVC)
   target_compile_options(AimSync PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/W4 $<$<CXX_COMPILER_ID:MSVC>:/constexpr:steps2147483647;/constexpr:depth2048> $<$<CONFIG:Release>:/sdl- /GS->>)
   target_compile_definitions(AimSync PRIVATE $<$<CONFIG:Release>:_USE_STD_VECTOR_ALGORITHMS=0>)
   target_link_options(AimSync PRIVATE $<$<CONFIG:Release>:/nodefaultlib /ENTRY:"DllMain">)
+  # Match MSBuild Release deps so freestanding CRT resolves wcslen/etc from ucrt
+  target_link_libraries(AimSync PRIVATE $<$<CONFIG:Release>:libcmt libvcruntime libucrt legacy_stdio_definitions>)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
