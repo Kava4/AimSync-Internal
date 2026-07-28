@@ -139,3 +139,7 @@ MIT — see [LICENSE](LICENSE).
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for branch naming, PR checklist, and review expectations.
 Use the pull request template when opening a PR against `main`.
+
+## Releases
+
+Binary releases (loader + DLL) are published on the [Releases](https://github.com/Kava4/AimSync-Internal/releases) page (`vMAJOR.MINOR.PATCH` tags).
