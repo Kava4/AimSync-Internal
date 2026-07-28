@@ -15,6 +15,7 @@
 #include <GameClient/EntitySystem/EntitySystem.h>
 #include <MemoryPatterns/PatternTypes/EntityPatternTypes.h>
 #include <MemoryPatterns/PatternTypes/PlayerPawnPatternTypes.h>
+#include <Platform/Macros/IsPlatform.h>
 #include <Utils/ColorUtils.h>
 
 #include "BaseEntity.h"
