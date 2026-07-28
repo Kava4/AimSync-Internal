@@ -6,9 +6,11 @@ jobs:
   msbuild:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-2022, windows-2025]
-        toolset: [ClangCL, MSVC]
+        # ClangCL OOMs on the unity-style dllmain TU after DX11/ImGui headers; MSVC covers CI.
+        toolset: [MSVC]
         configuration: [Debug, Release]
     steps:
     - uses: actions/checkout@v6
@@ -16,28 +18,23 @@ jobs:
       uses: microsoft/setup-msbuild@v3
     # vcxproj defaults to v145 (VS 2026 locally). CI runners use v143 (VS 2022).
     - name: Set toolset
-      run: |
-        $ts = if ("${{ matrix.toolset }}" -eq "ClangCL") { "ClangCL" } else { "v143" }
-        echo "toolset=/p:PlatformToolset=$ts" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      run: echo "toolset=/p:PlatformToolset=v143" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Build
       shell: cmd
-      # AimSync project only — Loader embeds Release DLL and is not needed for CI compile check
       run: msbuild Source\AimSync.vcxproj /p:Platform=x64 /p:Configuration=${{ matrix.configuration }} ${{ env.toolset }}
 
   cmake:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-2022, windows-2025]
-        toolset: [ClangCL, MSVC]
+        toolset: [MSVC]
         configuration: [Debug, Release]
     steps:
     - uses: actions/checkout@v6
-    - name: Set toolset
-      if: matrix.toolset == 'ClangCL'
-      run: echo "toolset=-T ${{ matrix.toolset }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: configure
-      run: cmake -Werror=dev -D ENABLE_TESTS="unit;functional" -D CMAKE_COMPILE_WARNING_AS_ERROR=1 -A x64 ${{ env.toolset }} -B build
+      run: cmake -Werror=dev -D ENABLE_TESTS="unit;functional" -D CMAKE_COMPILE_WARNING_AS_ERROR=1 -A x64 -B build
     - name: build source
       run: cmake --build build --target AimSync --config ${{ matrix.configuration }}
     - name: build unit tests

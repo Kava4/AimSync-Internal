@@ -162,7 +162,10 @@ public:
         if (!origin.hasValue())
             return {};
 
-        Optional<cs2::Vector> viewOffset = hookContext.patternSearchResults().template get<OffsetToViewOffset>().of(playerPawn).toOptional();
+        Optional<cs2::Vector> viewOffset{};
+#if IS_WIN64()
+        viewOffset = hookContext.patternSearchResults().template get<OffsetToViewOffset>().of(playerPawn).toOptional();
+#endif
         if (!viewOffset.hasValue()) {
             const auto* const fallback = reinterpret_cast<const cs2::Vector*>(reinterpret_cast<const std::byte*>(playerPawn) + cs2::combat_offsets::kViewOffset);
             viewOffset = *fallback;

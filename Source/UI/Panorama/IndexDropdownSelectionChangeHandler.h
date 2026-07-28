@@ -13,7 +13,8 @@ struct IndexDropdownSelectionChangeHandler {
     {
         if (selectedIndex < ConfigVariable::ValueType::kMin || selectedIndex > ConfigVariable::ValueType::kMax)
             return;
-        SET_CONFIG_VAR(ConfigVariable, static_cast<typename ConfigVariable::ValueType>(selectedIndex));
+        using Value = typename ConfigVariable::ValueType;
+        SET_CONFIG_VAR(ConfigVariable, Value{static_cast<typename Value::ValueType>(selectedIndex)});
     }
 
 private:

@@ -10,6 +10,7 @@ struct AttackInput {
     void press() const noexcept {}
     void release() const noexcept {}
     void clear() const noexcept {}
+    [[nodiscard]] bool isDown() const noexcept { return false; }
 };
 struct JumpInput {
     void press() const noexcept {}
