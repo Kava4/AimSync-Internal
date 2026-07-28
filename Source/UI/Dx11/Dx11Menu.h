@@ -32,4 +32,7 @@ inline void dx11MenuRequestUnload() noexcept {}
 [[nodiscard]] inline bool isDx11MenuVisible() noexcept { return false; }
 [[nodiscard]] inline bool shouldUsePanoramaMenu() noexcept { return true; }
 
+inline void aimSyncSetModuleHandle(void*) noexcept {}
+inline void aimSyncFreeLibrary() noexcept {}
+
 #endif
