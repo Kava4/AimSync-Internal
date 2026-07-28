@@ -29,6 +29,7 @@ public:
     {
     }
 
+    // NOLINTNEXTLINE(readability-function-cognitive-complexity)
     void simulate(Trajectory& traj, cs2::Vector start, cs2::Vector velocity, cs2::GrenadeKind kind, void* skipEntity, float frictionOverride = 0.0f) noexcept
     {
         using namespace grenade_prediction_params;

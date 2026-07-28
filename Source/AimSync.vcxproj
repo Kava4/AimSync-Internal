@@ -757,7 +757,8 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <RuntimeLibrary />
-      <AdditionalOptions>/constexpr:steps2147483647 /constexpr:depth2048 %(AdditionalOptions)</AdditionalOptions>    </ClCompile>
+      <AdditionalOptions Condition="'$(PlatformToolset)'!='ClangCL'">/constexpr:steps2147483647 /constexpr:depth2048 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

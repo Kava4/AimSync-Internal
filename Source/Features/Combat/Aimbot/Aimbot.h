@@ -11,13 +11,16 @@
 #include <GameClient/Entities/PlayerPawn.h>
 #include <GameClient/EntitySystem/EntitySystem.h>
 #include <HookContext/HookContextMacros.h>
-#include <ThirdParty/ImGui/imgui.h>
+#include <Platform/Macros/IsPlatform.h>
 #include <UI/Dx11/Dx11Menu.h>
 
 #include "AimbotConfigVariables.h"
 #include <Features/Combat/NoRecoil/NoRecoilConfigVariables.h>
 
+#if IS_WIN64()
+#include <ThirdParty/ImGui/imgui.h>
 #include <Windows.h>
+#endif
 
 template <typename HookContext>
 class Aimbot {
@@ -27,6 +30,7 @@ public:
     {
     }
 
+    // NOLINTNEXTLINE(readability-function-cognitive-complexity)
     void update() const noexcept
     {
         if (!GET_CONFIG_VAR(aimbot_vars::Enabled))
@@ -35,10 +39,12 @@ public:
         if (isDx11MenuVisible())
             return;
 
+#if IS_WIN64()
         if (GET_CONFIG_VAR(aimbot_vars::RequireHoldKey)) {
             if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000) == 0)
                 return;
         }
+#endif
 
         auto&& localPlayerPawn = hookContext.activeLocalPlayerPawn();
         if (!localPlayerPawn || !localPlayerPawn.isAlive().value_or(false))
@@ -89,6 +95,7 @@ public:
 
     void drawFov() const noexcept
     {
+#if IS_WIN64()
         if (!GET_CONFIG_VAR(aimbot_vars::Enabled) || !GET_CONFIG_VAR(aimbot_vars::DrawFov))
             return;
 
@@ -105,6 +112,7 @@ public:
         const float aimFovTan = tanf(aimFov * kDegToRad * 0.5f);
         const float radius = (aimFovTan / staticFovTan) * (display.x * 0.5f);
         drawList->AddCircle(center, radius, IM_COL32(90, 140, 255, 160), 0, 1.5f);
+#endif
     }
 
 private:
@@ -118,6 +126,7 @@ private:
         }
     }
 
+    // NOLINTNEXTLINE(readability-function-cognitive-complexity)
     void considerTarget(const cs2::CEntityIdentity& entityIdentity, const cs2::Vector& eyePosition, const cs2::QAngle& currentAngles, float maxFov, float& bestFov, cs2::Vector& bestTargetPosition, bool& hasTarget) const noexcept
     {
         const auto entityTypeInfo = hookContext.entityClassifier().classifyEntity(entityIdentity.entityClass);

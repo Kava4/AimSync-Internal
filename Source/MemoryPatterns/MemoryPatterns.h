@@ -48,7 +48,9 @@ constexpr auto kClientPatterns = []() consteval {
         .ADD_PATTERNS(HostageServicesPatterns)
         .ADD_PATTERNS(GlowPropertyPatterns)
         .ADD_PATTERNS(GlowSceneObjectPatterns)
+#if IS_WIN64()
         .ADD_PATTERNS(InventoryPatterns)
+#endif
         .ADD_PATTERNS(MemAllocPatterns)
         .ADD_PATTERNS(PanelPatterns)
         .ADD_PATTERNS(PanoramaDropDownPatterns)

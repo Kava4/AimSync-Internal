@@ -9,14 +9,17 @@ target_include_directories(AimSync PRIVATE "${CMAKE_SOURCE_DIR}/Source")
 target_link_libraries(AimSync PRIVATE ${CMAKE_DL_LIBS})
 
 if(WIN32)
-  target_sources(AimSync PRIVATE Platform/Windows/Syscalls/WindowsSyscall.asm)
+  target_sources(AimSync PRIVATE
+    Platform/Windows/Syscalls/WindowsSyscall.asm
+    UI/Dx11/Dx11MenuStubs.cpp)
 endif()
 
 if(MSVC)
   set_target_properties(AimSync PROPERTIES MSVC_RUNTIME_LIBRARY "$<$<CONFIG:Debug>:MultiThreadedDebugDLL>")
   string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
   target_sources(AimSync PRIVATE $<$<CONFIG:Release>:Platform/Windows/CRTWindows.cpp>)
-  target_compile_options(AimSync PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/W4 /constexpr:steps2147483647 /constexpr:depth2048 $<$<CONFIG:Release>:/sdl- /GS->>)
+  # /constexpr:* is MSVC cl only — clang-cl rejects them as unused (-Werror)
+  target_compile_options(AimSync PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/W4 $<$<CXX_COMPILER_ID:MSVC>:/constexpr:steps2147483647;/constexpr:depth2048> $<$<CONFIG:Release>:/sdl- /GS->>)
   target_compile_definitions(AimSync PRIVATE $<$<CONFIG:Release>:_USE_STD_VECTOR_ALGORITHMS=0>)
   target_link_options(AimSync PRIVATE $<$<CONFIG:Release>:/nodefaultlib /ENTRY:"DllMain">)
 endif()

@@ -31,6 +31,7 @@ public:
     {
     }
 
+    // NOLINTNEXTLINE(readability-function-cognitive-complexity)
     void handleGrenadePrediction(auto&& playerPawn, auto&& activeWeapon) noexcept
     {
         if (!playerPawn.isControlledByLocalPlayer()) {
@@ -190,6 +191,7 @@ private:
             panel.setVisible(false);
     }
 
+    // NOLINTNEXTLINE(readability-function-cognitive-complexity)
     void drawTrajectory(const Trajectory& traj) noexcept
     {
         if (!traj.valid || traj.pointsCount == 0) {

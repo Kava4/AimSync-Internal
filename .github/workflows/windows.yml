@@ -14,12 +14,15 @@ jobs:
     - uses: actions/checkout@v6
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v3
+    # vcxproj defaults to v145 (VS 2026 locally). CI runners use v143 (VS 2022).
     - name: Set toolset
-      if: matrix.toolset == 'ClangCL'
-      run: echo "toolset=/p:PlatformToolset=${{ matrix.toolset }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      run: |
+        $ts = if ("${{ matrix.toolset }}" -eq "ClangCL") { "ClangCL" } else { "v143" }
+        echo "toolset=/p:PlatformToolset=$ts" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Build
       shell: cmd
-      run: msbuild AimSync.sln /p:Platform=x64 /p:Configuration=${{ matrix.configuration }} ${{ env.toolset }}
+      # AimSync project only — Loader embeds Release DLL and is not needed for CI compile check
+      run: msbuild Source\AimSync.vcxproj /p:Platform=x64 /p:Configuration=${{ matrix.configuration }} ${{ env.toolset }}
 
   cmake:
     runs-on: ${{ matrix.os }}

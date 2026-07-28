@@ -1,6 +1,8 @@
 #pragma once
 
-#include <Windows.h>
+#include <Platform/Macros/IsPlatform.h>
+
+#if IS_WIN64()
 
 struct IDXGISwapChain;
 
@@ -19,3 +21,15 @@ void aimSyncOnEquipItemInLoadout(int team, int slot, unsigned long long itemId) 
 [[nodiscard]] bool isDx11MenuActive() noexcept;
 [[nodiscard]] bool isDx11MenuVisible() noexcept;
 [[nodiscard]] bool shouldUsePanoramaMenu() noexcept;
+
+#else
+
+inline void dx11MenuOnUnload() noexcept {}
+inline void dx11MenuTryDeferredInstall() noexcept {}
+inline void dx11MenuRequestUnload() noexcept {}
+[[nodiscard]] inline bool dx11MenuConsumeUnloadRequest() noexcept { return false; }
+[[nodiscard]] inline bool isDx11MenuActive() noexcept { return false; }
+[[nodiscard]] inline bool isDx11MenuVisible() noexcept { return false; }
+[[nodiscard]] inline bool shouldUsePanoramaMenu() noexcept { return true; }
+
+#endif
