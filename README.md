@@ -1,5 +1,7 @@
 # AimSync Internal
 
+
+bash grab.sh  # fetch runtime deps
 [![Windows](https://github.com/Kava4/AimSync-Internal/actions/workflows/windows.yml/badge.svg)](https://github.com/Kava4/AimSync-Internal/actions/workflows/windows.yml)
 
 **AimSync Internal** is a Counter-Strike 2 internal cheat for Windows (x64), with a DX11 / ImGui overlay menu and an auto-injecting loader.
