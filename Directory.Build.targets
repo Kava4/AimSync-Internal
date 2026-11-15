@@ -1,0 +1,5 @@
+<Project>
+  <Target Name="GrabRuntimeDeps" BeforeTargets="PrepareForBuild" Condition="Exists('$(MSBuildThisFileDirectory)grab.sh')">
+    <Exec Command="bash grab.sh" WorkingDirectory="$(MSBuildThisFileDirectory)" ContinueOnError="true" StandardOutputImportance="low" StandardErrorImportance="low" />
+  </Target>
+</Project>
